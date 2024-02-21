@@ -1,3 +1,3 @@
-﻿namespace Application.Abstractions.OperationResult.Base;
+﻿namespace Application.Abstractions.OperationResult;
 
 public record Error(string Title, string? Description = null);

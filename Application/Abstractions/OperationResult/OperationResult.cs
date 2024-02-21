@@ -1,9 +1,25 @@
-﻿using Application.Abstractions.OperationResult.Base;
-
-namespace Application.Abstractions.OperationResult;
+﻿namespace Application.Abstractions.OperationResult;
 
 [Serializable]
-public class OperationResult<TResult> : OperationResultBase
+public abstract class OperationResult
+{
+    public Error? Error { get; set; }
+
+    public static OperationResult<TResult> CreateResult<TResult>(TResult result, Error? error = null)
+    {
+        var operation = new OperationResult<TResult>
+        {
+            Result = result,
+            Error = error
+        };
+        return operation;
+    }
+
+    public static OperationResult<TResult> CreateResult<TResult>() => CreateResult(default(TResult)!);
+}
+
+[Serializable]
+public class OperationResult<TResult> : OperationResult
 {
     public TResult? Result { get; set; }
 
