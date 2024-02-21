@@ -2,45 +2,18 @@
 
 namespace Infrastructure.UnitOfWork;
 
-public sealed class UnitOfWork<TContext> : IUnitOfWork<TContext>
+public sealed class UnitOfWork<TContext>(TContext context) : IUnitOfWork<TContext>
     where TContext : DbContext
 {
     private bool _disposed;
 
-    public UnitOfWork(TContext context)
-    {
-        DbContext = context ?? throw new ArgumentNullException(nameof(context));
-        LastSaveChangeResult = new SaveChangesResult();
-    }
-
-    public TContext DbContext { get; }
-    public SaveChangesResult LastSaveChangeResult { get; }
+    public TContext DbContext { get; } = context ?? throw new ArgumentNullException(nameof(context));
 
     public int SaveChanges()
-    {
-        try
-        {
-            return DbContext.SaveChanges();
-        }
-        catch (Exception ex)
-        {
-            LastSaveChangeResult.Exception = ex;
-            return 0;
-        }
-    }
+        => DbContext.SaveChanges();
 
     public async Task<int> SaveChangesAsync()
-    {
-        try
-        {
-            return await DbContext.SaveChangesAsync();
-        }
-        catch (Exception ex)
-        {
-            LastSaveChangeResult.Exception = ex;
-            return 0;
-        }
-    }
+        => await DbContext.SaveChangesAsync();
 
     public void Dispose()
     {
@@ -54,7 +27,6 @@ public sealed class UnitOfWork<TContext> : IUnitOfWork<TContext>
         {
             if (disposing)
             {
-                //_repositories?.Clear();
                 DbContext.Dispose();
             }
         }

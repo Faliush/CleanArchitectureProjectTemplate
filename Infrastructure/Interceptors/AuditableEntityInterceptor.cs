@@ -9,43 +9,21 @@ public sealed class AuditableEntityInterceptor : SaveChangesInterceptor
 {
     private const string DefaultUserName = "Anonymous";
     private readonly DateTime DefaultDate = DateTime.UtcNow.ToUniversalTime();
-    public SaveChangesResult LastSaveChangesResult { get; }
-
-    public AuditableEntityInterceptor()
-    {
-        LastSaveChangesResult = new SaveChangesResult();
-    }
 
     public override int SavedChanges(SaveChangesCompletedEventData eventData, int result)
     {
-        try
-        {
-            if(eventData.Context is not null)
-                DbSaveChanges(eventData.Context!);
+        if(eventData.Context is not null)
+            DbSaveChanges(eventData.Context!);
 
-            return base.SavedChanges(eventData, result);
-        }
-        catch (Exception exception)
-        {
-            LastSaveChangesResult.Exception = exception;
-            return 0;
-        }
+        return base.SavedChanges(eventData, result);
     }
 
     public override ValueTask<int> SavedChangesAsync(SaveChangesCompletedEventData eventData, int result, CancellationToken cancellationToken = default)
     {
-        try
-        {
-            if(eventData.Context is not null)
-                DbSaveChanges(eventData.Context!);
+        if(eventData.Context is not null)
+            DbSaveChanges(eventData.Context!);
 
-            return base.SavedChangesAsync(eventData, result, cancellationToken);
-        }
-        catch (Exception exception)
-        {
-            LastSaveChangesResult.Exception = exception;
-            return ValueTask.FromResult(0);
-        }
+        return base.SavedChangesAsync(eventData, result, cancellationToken);
     }
 
     private void DbSaveChanges(DbContext context)
