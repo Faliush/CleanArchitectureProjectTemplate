@@ -3,12 +3,12 @@ using MediatR;
 
 namespace Application.Abstractions.Behaviors;
 
-public sealed class ValidatorBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+public sealed class ValidationPipelineBihavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators;
 
-    public ValidatorBehavior(IEnumerable<IValidator<TRequest>> validators) =>
+    public ValidationPipelineBihavior(IEnumerable<IValidator<TRequest>> validators) =>
         _validators = validators;
 
     public Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)

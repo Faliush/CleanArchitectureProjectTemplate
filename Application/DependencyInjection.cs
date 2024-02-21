@@ -16,12 +16,14 @@ public static class DependencyInjection
         services.AddMediatR(cfg =>
         {
             cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
-            cfg.AddOpenBehavior(typeof(QueryCachingBehavior<,>));
+
+            cfg.AddOpenBehavior(typeof(RequestLoggingPipelineBehavior<,>));
+            cfg.AddOpenBehavior(typeof(QueryCachingPipelineBehavior<,>));
         });
 
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBihavior<,>));
 
         services.AddMemoryCache();
 
