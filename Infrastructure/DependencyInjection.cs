@@ -1,4 +1,5 @@
-﻿using Infrastructure.Interceptors;
+﻿using Infrastructure.DatabaseInitialization;
+using Infrastructure.Interceptors;
 using Infrastructure.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -11,6 +12,8 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddHostedService<MigrationService>();
+
         services.AddSingleton<ISaveChangesInterceptor, AuditableEntityInterceptor>();
 
         services.AddDbContext<ApplicationDbContext>(
