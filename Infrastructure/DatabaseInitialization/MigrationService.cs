@@ -20,16 +20,16 @@ public class MigrationService : BackgroundService
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        using var scope = _serviceProvider.CreateScope();
-        await using var context = scope.ServiceProvider.GetService<ApplicationDbContext>()!;
-        try
-        {
-            await context.Database.MigrateAsync(stoppingToken);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, "Unhandled exceptions occurred while migrating database");
-            return;
-        }
+        //using var scope = _serviceProvider.CreateScope();
+        //await using var context = scope.ServiceProvider.GetService<ApplicationDbContext>()!;
+        //try
+        //{
+        //    await context.Database.MigrateAsync(stoppingToken);
+        //}
+        //catch (Exception e)
+        //{
+        //    _logger.LogError(e, "Unhandled exceptions occurred while migrating database");
+        //    return;
+        //}
     }
 }

@@ -19,7 +19,7 @@ public static class DependencyInjection
         services.AddDbContext<ApplicationDbContext>(
             (sp, option) => option
                 .UseNpgsql(configuration.GetConnectionString(nameof(ApplicationDbContext)))
-                .AddInterceptors(sp.GetRequiredService<AuditableEntityInterceptor>()));
+                .AddInterceptors(sp.GetRequiredService<ISaveChangesInterceptor>()));
 
         services.AddScoped<IUnitOfWork<ApplicationDbContext>,  UnitOfWork<ApplicationDbContext>>();
         services.AddScoped<IUnitOfWork, UnitOfWork<ApplicationDbContext>>();
