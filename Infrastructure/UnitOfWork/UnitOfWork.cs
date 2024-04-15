@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Infrastructure.UnitOfWork;
 
@@ -14,6 +15,28 @@ public sealed class UnitOfWork<TContext>(TContext context) : IUnitOfWork<TContex
 
     public async Task<int> SaveChangesAsync()
         => await DbContext.SaveChangesAsync();
+
+    public Task<IDbContextTransaction> BeginTransactionAsync(bool useIfExists = false)
+    {
+        var transaction = DbContext.Database.CurrentTransaction;
+        if (transaction == null)
+        {
+            return DbContext.Database.BeginTransactionAsync();
+        }
+
+        return useIfExists ? Task.FromResult(transaction) : DbContext.Database.BeginTransactionAsync();
+    }
+
+    public IDbContextTransaction BeginTransaction(bool useIfExists = false)
+    {
+        var transaction = DbContext.Database.CurrentTransaction;
+        if (transaction == null)
+        {
+            return DbContext.Database.BeginTransaction();
+        }
+
+        return useIfExists ? transaction : DbContext.Database.BeginTransaction();
+    }
 
     public void Dispose()
     {

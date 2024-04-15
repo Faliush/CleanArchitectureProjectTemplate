@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Infrastructure.UnitOfWork;
 
@@ -14,4 +15,8 @@ public interface IUnitOfWork : IDisposable
     int SaveChanges();
 
     Task<int> SaveChangesAsync();
+
+    IDbContextTransaction BeginTransaction(bool useIfExists = false);
+
+    Task<IDbContextTransaction> BeginTransactionAsync(bool useIfExists = false);
 }
