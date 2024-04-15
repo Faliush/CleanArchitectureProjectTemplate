@@ -1,4 +1,4 @@
-﻿namespace Domain.ValueObjects.Base;
+﻿namespace Domain.Core.Primitives;
 
 public abstract class ValueObject : IEquatable<ValueObject>
 {

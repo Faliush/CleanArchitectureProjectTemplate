@@ -32,8 +32,6 @@ builder.Services.AddApiVersioning(options =>
 
 builder.Services.ConfigureOptions<ConfigureSwaggerGenOptions>();
 
-builder.Services.AddHttpContextAccessor();
-
 builder.Services.AddCarter();
 
 var app = builder.Build();

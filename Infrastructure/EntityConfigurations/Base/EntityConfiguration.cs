@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using Domain.Entities.Base;
+using Domain.Core.Primitives;
 
 namespace Infrastructure.EntityConfigurations.Base;
 
-public abstract class IdentityEntityConfiguration<T> : IEntityTypeConfiguration<T> where T : Identity
+public abstract class EntityConfiguration<T> : IEntityTypeConfiguration<T> where T : Entity
 {
     public void Configure(EntityTypeBuilder<T> builder)
     {

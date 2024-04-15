@@ -14,7 +14,7 @@ public static class DependencyInjection
     {
         services.AddHostedService<MigrationService>();
 
-        services.AddSingleton<ISaveChangesInterceptor, AuditableEntityInterceptor>();
+        services.AddSingleton<ISaveChangesInterceptor, DbSaveChangesInterceptor>();
 
         services.AddDbContext<ApplicationDbContext>(
             (sp, option) => option

@@ -1,4 +1,4 @@
-﻿using Domain.Entities.Base;
+﻿using Domain.Core.Primitives;
 using Infrastructure.Pagination;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Query;
@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 namespace Infrastructure.Repositories.Contracts.Base;
 
 public interface IRepositoryBase<TEntity>
-    where TEntity : Identity
+    where TEntity : Entity
 {
     IQueryable<TEntity> GetAll(
         Expression<Func<TEntity, bool>>? predicate = null,
