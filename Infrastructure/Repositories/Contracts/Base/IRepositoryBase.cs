@@ -1,4 +1,4 @@
-﻿using Domain.Base;
+﻿using Domain.Entities.Base;
 using Infrastructure.Pagination;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Query;

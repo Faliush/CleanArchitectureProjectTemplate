@@ -1,4 +1,4 @@
-﻿namespace Domain.Base;
+﻿namespace Domain.Entities.Base;
 
 public interface IAuditable
 {

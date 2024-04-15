@@ -1,5 +1,4 @@
-﻿
-namespace Domain.Base;
+﻿namespace Domain.Entities.Base;
 
 public abstract class Identity : IHaveId
 {

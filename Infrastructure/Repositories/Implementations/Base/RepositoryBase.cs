@@ -1,10 +1,10 @@
-﻿using Domain.Base;
-using Infrastructure.Pagination;
+﻿using Infrastructure.Pagination;
 using Infrastructure.Repositories.Contracts.Base;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using Domain.Entities.Base;
 
 namespace Infrastructure.Repositories.Implementations.Base;
 

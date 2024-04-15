@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Domain.Base;
 using Microsoft.AspNetCore.Http;
+using Domain.Entities.Base;
 
 namespace Infrastructure.Interceptors;
 
