@@ -1,10 +1,10 @@
-﻿using Application.Abstractions.OperationResult;
+﻿using Domain.Core.Primitives.Result;
 
 namespace Web.Api.Extentions;
 
 public static class OperationResultExtention
 {
-    public static IResult ToBadRequestProblem(this OperationResult result)
+    public static IResult ToBadRequestProblem(this Result result)
     {
         if (result.Error is null)
             throw new InvalidOperationException();
@@ -19,7 +19,7 @@ public static class OperationResultExtention
             });
     }
 
-    public static IResult ToNotFoundProblem(this OperationResult result)
+    public static IResult ToNotFoundProblem(this Result result)
     {
         if (result.Error is null)
             throw new InvalidOperationException();
