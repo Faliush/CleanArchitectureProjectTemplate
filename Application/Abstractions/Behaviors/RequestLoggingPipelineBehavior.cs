@@ -1,13 +1,14 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using Serilog.Context;
+using Domain.Core.Primitives.Result;
 
 namespace Application.Abstractions.Behaviors;
 
 internal sealed class RequestLoggingPipelineBehavior<TRequest, TResponse>
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : class
-    where TResponse : OperationResult.OperationResult
+    where TResponse : Result
 {
     private readonly ILogger _logger;
 
