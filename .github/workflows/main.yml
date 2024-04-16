@@ -1,0 +1,49 @@
+name: "Build & Test & Publish"
+
+on: 
+  workflow_dispatch:
+  push: 
+    branches: ["master"]
+
+env:
+  AZURE_WEBAPP_NAME: web-api-name
+  AZURE_WEBAPP_PACKAGE_PATH: './publish'
+  DOTNET_VERSION: '8.0.x'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore ./CleanArchitectureProjectTemplate.sln
+
+      - name: Build
+        run: dotnet build ./CleanArchitectureProjectTemplate.sln -c Release --no-restore
+
+      - name: Test 
+        run: dotnet test ./CleanArchitectureProjectTemplate.sln -c Release --no-restore --no-build  
+
+  # deploy:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+
+  #   steps: 
+  #     - name: Publish
+  #       run: dotnet publish ./CleanArchitectureProjectTemplate.sln --no-build --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+
+  #     - name: Deploy to Azure
+  #       uses: azure/webapps-deploy@v2
+  #       with: 
+  #         app-name: ${{ env.AZURE_WEBAPP_NAME }}
+  #         publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+  #         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        
+      
+  
