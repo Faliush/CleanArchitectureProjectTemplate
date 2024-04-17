@@ -22,13 +22,13 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Restore dependencies
-        run: dotnet restore ./CleanArchitectureProjectTemplate.sln
+        run: dotnet restore src/CleanArchitectureProjectTemplate.sln
 
       - name: Build
-        run: dotnet build ./CleanArchitectureProjectTemplate.sln -c Release --no-restore
+        run: dotnet build src/CleanArchitectureProjectTemplate.sln -c Release --no-restore
 
       - name: Test 
-        run: dotnet test ./CleanArchitectureProjectTemplate.sln -c Release --no-restore --no-build  
+        run: dotnet test src/CleanArchitectureProjectTemplate.sln -c Release --no-restore --no-build  
 
   # deploy:
   #   needs: build
@@ -36,7 +36,7 @@ jobs:
 
   #   steps: 
   #     - name: Publish
-  #       run: dotnet publish ./CleanArchitectureProjectTemplate.sln --no-build --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+  #       run: dotnet publish src/CleanArchitectureProjectTemplate.sln --no-build --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
   #     - name: Deploy to Azure
   #       uses: azure/webapps-deploy@v2
