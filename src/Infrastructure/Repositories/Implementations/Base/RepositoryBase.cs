@@ -1,4 +1,4 @@
-﻿using Infrastructure.Pagination;
+﻿using Domain.Core.Primitives.Pagination;
 using Infrastructure.Repositories.Contracts.Base;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Query;

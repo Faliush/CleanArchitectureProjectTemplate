@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Pagination;
+﻿namespace Domain.Core.Primitives.Pagination;
 
 public interface IPagedList<T>
 {
