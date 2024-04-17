@@ -1,5 +1,5 @@
 ﻿using Domain.Core.Primitives;
-using Infrastructure.Pagination;
+using Domain.Core.Primitives.Pagination;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;

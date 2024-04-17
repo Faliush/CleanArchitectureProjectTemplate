@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Pagination;
+namespace Domain.Core.Primitives.Pagination;
 
 public static class QueryblePagedListExtention
 {
