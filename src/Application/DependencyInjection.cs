@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Behaviors;
+using Application.Abstractions.Events;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,7 +24,9 @@ public static class DependencyInjection
 
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBihavior<,>));
 
-        services.AddMemoryCache();
+        services.AddSingleton<InMemmoryMessageQueue>();
+        services.AddSingleton<IEventBus, EventBus>();
+        services.AddHostedService<IntegrationEventProcessorJob>();
 
         return services;
     }
