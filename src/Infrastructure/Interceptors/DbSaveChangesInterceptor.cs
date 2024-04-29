@@ -1,20 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Domain.Core.Abstractions;
-using Domain.Core.Events;
 using Domain.Core.Primitives;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using MediatR;
+using Newtonsoft.Json;
+using Infrastructure.Outbox;
 
 namespace Infrastructure.Interceptors;
 
-public sealed class DbSaveChangesInterceptor : SaveChangesInterceptor
+internal sealed class DbSaveChangesInterceptor : SaveChangesInterceptor
 {
-    private readonly DateTime DefaultDate = DateTime.UtcNow.ToUniversalTime();
-    private readonly IPublisher _publisher;
-
-    public DbSaveChangesInterceptor(IPublisher publisher)
-        => _publisher = publisher;
+    private static readonly DateTime DefaultDate = DateTime.UtcNow.ToUniversalTime();
+    private static readonly JsonSerializerSettings jsonSettings = new()
+    {
+        TypeNameHandling = TypeNameHandling.All
+    };
 
     public override int SavedChanges(SaveChangesCompletedEventData eventData, int result)
     {
@@ -24,7 +24,7 @@ public sealed class DbSaveChangesInterceptor : SaveChangesInterceptor
 
             UpdateSoftDeletableEntities(DefaultDate, eventData.Context!);
 
-            PublishDomainEvents(eventData.Context!, default).GetAwaiter().GetResult();
+            InsertOutboxMessages(eventData.Context!);
         }
             
         return base.SavedChanges(eventData, result);
@@ -38,7 +38,7 @@ public sealed class DbSaveChangesInterceptor : SaveChangesInterceptor
 
             UpdateSoftDeletableEntities(DefaultDate, eventData.Context!);
 
-            await PublishDomainEvents(eventData.Context!, cancellationToken);
+            InsertOutboxMessages(eventData.Context!);
         }
 
         return await base.SavedChangesAsync(eventData, result, cancellationToken);
@@ -103,19 +103,28 @@ public sealed class DbSaveChangesInterceptor : SaveChangesInterceptor
         }
     }
 
-    private async Task PublishDomainEvents(DbContext context, CancellationToken cancellationToken)
+    private static void InsertOutboxMessages(DbContext context)
     {
-        List<EntityEntry<AggregateRoot>> aggregateRoots = context.ChangeTracker
+        var outboxMessages = context
+            .ChangeTracker
             .Entries<AggregateRoot>()
-            .Where(entityEntry => entityEntry.Entity.DomainEvents.Any())
+            .Select(entry => entry.Entity)
+            .SelectMany(entity =>
+            {
+                var domainEvents = entity.DomainEvents;
+
+                entity.ClearDomainEvents();
+
+                return domainEvents;
+            })
+            .Select(domainEvent => new OutboxMessage {
+                Id = Guid.NewGuid(),
+                Name = domainEvent.GetType().Name,
+                Content = JsonConvert.SerializeObject(domainEvent, jsonSettings),
+                CreatedOnUtc = DefaultDate
+            })
             .ToList();
 
-        List<IDomainEvent> domainEvents = aggregateRoots.SelectMany(entityEntry => entityEntry.Entity.DomainEvents).ToList();
-
-        aggregateRoots.ForEach(entityEntry => entityEntry.Entity.ClearDomainEvents());
-
-        IEnumerable<Task> tasks = domainEvents.Select(domainEvent => _publisher.Publish(domainEvent, cancellationToken));
-
-        await Task.WhenAll(tasks);
+        context.Set<OutboxMessage>().AddRange(outboxMessages);
     }
 }

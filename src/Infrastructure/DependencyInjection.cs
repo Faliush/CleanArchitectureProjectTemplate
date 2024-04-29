@@ -1,10 +1,12 @@
-﻿using Infrastructure.DatabaseInitialization;
+﻿using Infrastructure.BackgroundJobs;
+using Infrastructure.DatabaseInitialization;
 using Infrastructure.Interceptors;
 using Infrastructure.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Quartz;
 
 namespace Infrastructure;
 
@@ -20,6 +22,17 @@ public static class DependencyInjection
             (sp, option) => option
                 .UseNpgsql(configuration.GetConnectionString(nameof(ApplicationDbContext)))
                 .AddInterceptors(sp.GetRequiredService<ISaveChangesInterceptor>()));
+
+        services.AddQuartz(configure =>
+        {
+            var jobKey = new JobKey(nameof(ProcessOutboxMessagesJob));
+
+            configure.AddJob<ProcessOutboxMessagesJob>(jobKey)
+                     .AddTrigger(trigger =>
+                        trigger.ForJob(jobKey)
+                                .WithSimpleSchedule(schedule => schedule.WithIntervalInSeconds(10)
+                                                                        .RepeatForever())); 
+        });
 
         services.AddScoped<IUnitOfWork<ApplicationDbContext>,  UnitOfWork<ApplicationDbContext>>();
         services.AddScoped<IUnitOfWork, UnitOfWork<ApplicationDbContext>>();
