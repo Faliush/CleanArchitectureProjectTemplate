@@ -1,4 +1,7 @@
-﻿using Application.Abstractions.Behaviors;
+﻿using Application.Abstractions.Authentication.Jwt;
+using Application.Abstractions.Authentication.PermissionService;
+using Application.Abstractions.Behaviors;
+using Application.Abstractions.Cryptography;
 using Application.Abstractions.Events;
 using FluentValidation;
 using MediatR;
@@ -27,6 +30,13 @@ public static class DependencyInjection
         services.AddSingleton<InMemmoryMessageQueue>();
         services.AddSingleton<IEventBus, EventBus>();
         services.AddHostedService<IntegrationEventProcessorJob>();
+
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<IPasswordHashChecker, PasswordHasher>();
+
+        services.AddScoped<IJwtProvider, JwtProvider>();
+
+        services.AddScoped<IPermissionService, PermissionService>();
 
         return services;
     }

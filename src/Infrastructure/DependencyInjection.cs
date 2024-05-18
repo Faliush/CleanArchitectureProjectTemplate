@@ -1,6 +1,8 @@
 ﻿using Infrastructure.BackgroundJobs;
 using Infrastructure.DatabaseInitialization;
 using Infrastructure.Interceptors;
+using Infrastructure.Repositories.Contracts;
+using Infrastructure.Repositories.Implementations;
 using Infrastructure.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -36,6 +38,8 @@ public static class DependencyInjection
 
         services.AddScoped<IUnitOfWork<ApplicationDbContext>,  UnitOfWork<ApplicationDbContext>>();
         services.AddScoped<IUnitOfWork, UnitOfWork<ApplicationDbContext>>();
+
+        services.AddScoped<IUserRepository, UserRepository>();
 
         return services;
     }

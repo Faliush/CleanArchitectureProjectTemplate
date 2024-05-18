@@ -35,6 +35,19 @@ public class Result
     public static Result Failure(Error error) => new(false, error);
 
     public static Result<TResult> Failure<TResult>(Error error) => new(default!, false, error);
+
+    public static Result FirstFailureOrSuccess(params Result[] results)
+    {
+        foreach (Result result in results)
+        {
+            if (result.IsFailure)
+            {
+                return result;
+            }
+        }
+
+        return Success();
+    }
 }
 
 public class Result<TResult> : Result 

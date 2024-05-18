@@ -8,12 +8,12 @@ using Domain.Core.Primitives;
 
 namespace Infrastructure.Repositories.Implementations.Base;
 
-public class RepositoryBase<TEntity> : IRepositoryBase<TEntity> where TEntity : Entity
+internal abstract class RepositoryBase<TEntity> : IRepositoryBase<TEntity> where TEntity : Entity
 {
-    private readonly DbContext _dbContext;
-    private readonly DbSet<TEntity> _dbSet;
+    protected readonly DbContext _dbContext;
+    protected readonly DbSet<TEntity> _dbSet;
 
-    public RepositoryBase(DbContext dbContext)
+    protected RepositoryBase(DbContext dbContext)
     {
         _dbContext = dbContext;
         _dbSet = _dbContext.Set<TEntity>();
