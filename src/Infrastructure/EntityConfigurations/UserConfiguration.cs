@@ -1,15 +1,18 @@
 ﻿using Domain.Entities;
 using Domain.ValueObjects;
-using Infrastructure.EntityConfigurations.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.EntityConfigurations;
 
-internal sealed class UserConfiguration : EntityConfiguration<User>
+internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
 {
-    protected override void AddBuilder(EntityTypeBuilder<User> builder)
+    public void Configure(EntityTypeBuilder<User> builder)
     {
+        builder.ToTable("Users");
+
+        builder.HasKey(x => x.Id);
+
         builder.OwnsOne(user => user.FirstName, firstNameBuider =>
         {
             firstNameBuider.WithOwner();
@@ -51,6 +54,4 @@ internal sealed class UserConfiguration : EntityConfiguration<User>
         builder.HasMany(x => x.Roles)
             .WithOne();
     }
-
-    protected override string TableName() => "Users";
 }

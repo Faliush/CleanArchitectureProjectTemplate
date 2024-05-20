@@ -13,7 +13,8 @@ internal sealed class RolePermissionConfiguration : IEntityTypeConfiguration<Rol
 
         builder.HasData(
             Create(Role.Registered, Permission.ReadUsers), 
-            Create(Role.Registered, Permission.ManageUsers));
+            Create(Role.Administrator, Permission.ManageUsers),
+            Create(Role.Administrator, Permission.ReadUsers));
     }
 
     private static RolePermission Create(Role role, Permission permission)

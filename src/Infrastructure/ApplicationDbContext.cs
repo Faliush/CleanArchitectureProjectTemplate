@@ -15,8 +15,8 @@ public class ApplicationDbContext(DbContextOptions options) : DbContext(options)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.ApplyCustomEntityConfiguration();
-
         modelBuilder.ApplyUtcDateTimeConverter();
+       
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(DependencyInjection).Assembly);
     }
 }
