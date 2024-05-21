@@ -1,0 +1,95 @@
+version: '3.4'
+
+services:
+   webapi:
+    container_name: Api
+    build:
+      context: .
+      dockerfile: backend/Web.Api/Dockerfile
+    ports:
+      - 5000:80
+    depends_on:
+      - postgres
+    environment:
+      - DB_API_HOST=db.postgres.api
+      - DB_API_NAME=DatabaseName
+      - DB_SA_PASSWORD=12345
+      - DB_API_PORT=5432 
+
+   postgres:
+    container_name: Postgres
+    image: postgres
+    environment:
+      - POSTGRES_DB=DatabaseName
+      - POSTGRES_USER=postgres 
+      - POSTGRES_PASSWORD=12345
+    ports:
+      - "5432:5432"
+    volumes:
+      - './volumes/db/postgresql:/var/lib/postgressql/data'
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+   
+   mssql:
+    container_name: SQLServer
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    restart: always
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Password12345"
+    ports:
+      - 1433:1433
+    volumes:
+       - "./volumes/db/sqlserver:/var/opt/mssql/data"
+
+   rabbitmq:
+    container_name: RabbitMq
+    image: "rabbitmq:3-management"
+    restart: "always"
+    environment:
+      RABBITMQ_DEFAULT_USER: "rabbitmq"
+      RABBITMQ_DEFAULT_PASS: "rabbitmq"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    volumes:
+      - "./volumes/rabbitmq/data/:/var/lib/rabbitmq"
+      - "./volumes/rabbitmq/log/:/var/lib/rabbitmq"
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "ping" ]
+      interval: "30s"
+      timeout: "5s"
+      retries: 3
+
+   redis:
+    container_name: Redis
+    image: redis
+    command: ["redis-server", "--appendonly", "yes"]
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - './volumes/cache/redis/data:/root/redis'
+      - './volumes/cache/redis/redis.conf:/usr/local/etc/redis/redis.conf'
+    environment:
+      - REDIS_PORT=6379
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: "30s"
+      timeout: "5s"
+      retries: 3
+
+   seq:
+    image: "datalust/seq:latest"
+    container_name: "Seq"
+    restart: "always"
+    ports: 
+      - "5341:5341"
+      - "8081:80"
+    environment: 
+      - ACCEPT_EULA=Y
