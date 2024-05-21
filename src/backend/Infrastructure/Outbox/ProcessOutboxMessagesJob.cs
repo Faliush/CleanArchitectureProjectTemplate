@@ -1,11 +1,11 @@
 ﻿using Domain.Core.Events;
-using Infrastructure.Outbox;
+using Infrastructure.Database;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Quartz;
 
-namespace Infrastructure.BackgroundJobs;
+namespace Infrastructure.Outbox;
 
 [DisallowConcurrentExecution]
 public class ProcessOutboxMessagesJob(ApplicationDbContext dbContext, IPublisher publisher) : IJob
@@ -18,12 +18,12 @@ public class ProcessOutboxMessagesJob(ApplicationDbContext dbContext, IPublisher
             .Take(20)
             .ToListAsync(context.CancellationToken);
 
-        foreach(OutboxMessage outboxMessage in messages)
+        foreach (OutboxMessage outboxMessage in messages)
         {
             IDomainEvent? domainEvent = JsonConvert
                 .DeserializeObject<IDomainEvent>(outboxMessage.Content);
 
-            if(domainEvent is null)
+            if (domainEvent is null)
             {
                 continue;
             }

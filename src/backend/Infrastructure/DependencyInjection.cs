@@ -1,6 +1,6 @@
-﻿using Infrastructure.BackgroundJobs;
-using Infrastructure.DatabaseInitialization;
+﻿using Infrastructure.Database;
 using Infrastructure.Interceptors;
+using Infrastructure.Outbox;
 using Infrastructure.Repositories.Contracts;
 using Infrastructure.Repositories.Implementations;
 using Infrastructure.UnitOfWork;

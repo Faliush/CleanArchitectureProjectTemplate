@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using Domain.ValueObjects;
+using Infrastructure.Database;
 using Infrastructure.Repositories.Contracts;
 using Infrastructure.Repositories.Implementations.Base;
 using Microsoft.EntityFrameworkCore;

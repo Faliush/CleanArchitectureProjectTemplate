@@ -1,5 +1,5 @@
 ﻿using Domain.Entities;
-using Infrastructure;
+using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Abstractions.Authentication.PermissionService;
