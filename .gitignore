@@ -365,5 +365,3 @@ MigrationBackup/
 FodyWeavers.xsd
 
 *.dockerignore
-*docker-compose.dcproj
-*.gitattributes
