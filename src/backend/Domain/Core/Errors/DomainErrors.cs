@@ -8,6 +8,12 @@ public static class DomainErrors
     {
         public static Error InvalidCredentials => new("User.InvalidCredentials", "Invalid email or password");
     }
+
+    public static class Role 
+    {
+        public static Error NotFound => new("Role.NotFound", "Given role id doesn't exist");
+    }
+
     public static class FirstName
     {
         public static Error NullOrEmpty => new("FirstName.NullOrEmpty", "First name is required");

@@ -6,20 +6,22 @@ namespace Domain.Entities;
 
 public sealed class User : AggregateRoot, IAuditable
 {
-    private User(FirstName firstName, LastName lastName, Email email, string passwordHash)
+    private User(FirstName firstName, LastName lastName, Email email, string passwordHash, int roleId)
         : base(Guid.NewGuid())
     {
         FirstName = firstName;
         LastName = lastName;
         Email = email;
         PasswordHash = passwordHash;
+        RoleId = roleId;
+
     }
 
     private User() { }
 
-    public static User Create(FirstName firstName, LastName lastName, Email email, string passwordHash)
+    public static User Create(FirstName firstName, LastName lastName, Email email, string passwordHash, int RoleId)
     {
-        var user = new User(firstName, lastName, email, passwordHash);
+        var user = new User(firstName, lastName, email, passwordHash, RoleId);
 
         // this can be domain event
 
@@ -40,5 +42,6 @@ public sealed class User : AggregateRoot, IAuditable
 
     public DateTime? ModifiedOnUtc { get; }
 
-    public ICollection<Role>? Roles { get; set; }
+    public int RoleId { get; private set; }
+    public Role Role { get; set; }
 }

@@ -14,7 +14,7 @@ public interface IUnitOfWork : IDisposable
 {
     int SaveChanges();
 
-    Task<int> SaveChangesAsync();
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 
     IDbContextTransaction BeginTransaction(bool useIfExists = false);
 

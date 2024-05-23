@@ -4,11 +4,10 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using Domain.Core.Primitives;
 
 namespace Infrastructure.Repositories.Implementations.Base;
 
-internal abstract class RepositoryBase<TEntity> : IRepositoryBase<TEntity> where TEntity : Entity
+internal abstract class RepositoryBase<TEntity> : IRepositoryBase<TEntity> where TEntity : class
 {
     protected readonly DbContext _dbContext;
     protected readonly DbSet<TEntity> _dbSet;

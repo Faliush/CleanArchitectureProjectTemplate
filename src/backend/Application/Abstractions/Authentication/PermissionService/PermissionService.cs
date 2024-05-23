@@ -9,16 +9,16 @@ public class PermissionService(ApplicationDbContext context)
 {
     public async Task<HashSet<string>> GetPermissionsAsync(Guid userId)
     {
-        ICollection<Role>?[] roles = await context
+        var roles = await context
             .Set<User>()
-            .Include(x => x.Roles)
+            .Include(x => x.Role)
             .ThenInclude(x => x.Permissions)
             .Where(x => x.Id == userId)
-            .Select(x => x.Roles)
+            .Select(x => x.Role)
             .ToArrayAsync();
 
         var permissions = roles
-            .SelectMany(x => x)
+            .Select(x => x)
             .SelectMany(x => x.Permissions)
             .Select(x => x.Name)
             .ToHashSet();

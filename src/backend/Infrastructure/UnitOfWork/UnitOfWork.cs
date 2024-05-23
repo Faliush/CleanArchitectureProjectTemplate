@@ -13,8 +13,8 @@ public sealed class UnitOfWork<TContext>(TContext context) : IUnitOfWork<TContex
     public int SaveChanges()
         => DbContext.SaveChanges();
 
-    public async Task<int> SaveChangesAsync()
-        => await DbContext.SaveChangesAsync();
+    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        => await DbContext.SaveChangesAsync(cancellationToken);
 
     public Task<IDbContextTransaction> BeginTransactionAsync(bool useIfExists = false)
     {

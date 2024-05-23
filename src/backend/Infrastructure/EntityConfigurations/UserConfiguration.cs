@@ -51,7 +51,9 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Ignore(user => user.FullName);
 
-        builder.HasMany(x => x.Roles)
-            .WithMany();
+        builder.HasOne(x => x.Role)
+            .WithMany(x => x.Users)
+            .HasForeignKey(x => x.RoleId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

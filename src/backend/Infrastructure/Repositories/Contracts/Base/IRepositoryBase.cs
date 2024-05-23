@@ -1,5 +1,4 @@
-﻿using Domain.Core.Primitives;
-using Domain.Core.Primitives.Pagination;
+﻿using Domain.Core.Primitives.Pagination;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
@@ -7,7 +6,7 @@ using System.Linq.Expressions;
 namespace Infrastructure.Repositories.Contracts.Base;
 
 public interface IRepositoryBase<TEntity>
-    where TEntity : Entity
+    where TEntity : class
 {
     IQueryable<TEntity> GetAll(
         Expression<Func<TEntity, bool>>? predicate = null,
@@ -86,6 +85,4 @@ public interface IRepositoryBase<TEntity>
     Task<int> ExecuteDeleteAsync(
         Expression<Func<TEntity, bool>> predicate,
         CancellationToken cancellationToken = default);
-
-
 }
