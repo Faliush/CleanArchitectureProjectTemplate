@@ -1,4 +1,5 @@
 ﻿using Domain.Core.Primitives.Pagination;
+using Domain.Core.Primitives.Result;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
@@ -9,6 +10,15 @@ public interface IRepositoryBase<TEntity>
     where TEntity : class
 {
     IQueryable<TEntity> GetAll(
+        Expression<Func<TEntity, bool>>? predicate = null,
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        bool disableQuerySpliting = false,
+        bool disableTracking = false,
+        bool ignoreQueryFilters = false,
+        bool ignoreAutoInclude = false);
+    IQueryable<TResult> GetAll<TResult>(
+        Expression<Func<TEntity, TResult>> selector,
         Expression<Func<TEntity, bool>>? predicate = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
@@ -27,8 +37,31 @@ public interface IRepositoryBase<TEntity>
         bool disableTracking = false,
         bool ignoreQueryFilters = false,
         bool ignoreAutoInclude = false);
+    
+    IPagedList<TResult> GetPagedList<TResult>(
+        Expression<Func<TEntity, TResult>> selector,
+        Expression<Func<TEntity, bool>>? predicate = null,
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        int pageIndex = 0,
+        int pageSize = 20,
+        bool disableQuerySpliting = false,
+        bool disableTracking = false,
+        bool ignoreQueryFilters = false,
+        bool ignoreAutoInclude = false);
 
     Task<IList<TEntity>> GetAllAsync(
+        Expression<Func<TEntity, bool>>? predicate = null,
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        bool disableQuerySpliting = false,
+        bool disableTracking = false,
+        bool ignoreQueryFilters = false,
+        bool ignoreAutoInclude = false,
+        CancellationToken cancellationToken = default);
+    
+    Task<IList<TResult>> GetAllAsync<TResult>(
+        Expression<Func<TEntity, TResult>> selector,
         Expression<Func<TEntity, bool>>? predicate = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
@@ -49,6 +82,19 @@ public interface IRepositoryBase<TEntity>
         bool ignoreQueryFilters = false,
         bool ignoreAutoInclude = false,
         CancellationToken cancellationToken = default);
+    
+    Task<IPagedList<TResult>> GetPagedListAsync<TResult>(
+        Expression<Func<TEntity, TResult>> selector,
+        Expression<Func<TEntity, bool>>? predicate = null,
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        int pageIndex = 0,
+        int pageSize = 20,
+        bool disableQuerySpliting = false,
+        bool disableTracking = false,
+        bool ignoreQueryFilters = false,
+        bool ignoreAutoInclude = false,
+        CancellationToken cancellationToken = default);
 
     TEntity? GetFirstOrDefault(
         Expression<Func<TEntity, bool>>? predicate = null,
@@ -58,8 +104,29 @@ public interface IRepositoryBase<TEntity>
         bool disableTracking = false,
         bool ignoreQueryFilters = false,
         bool ignoreAutoInclude = false);
+    
+    TResult? GetFirstOrDefault<TResult>(
+        Expression<Func<TEntity, TResult>> selector,
+        Expression<Func<TEntity, bool>>? predicate = null,
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        bool disableQuerySpliting = false,
+        bool disableTracking = false,
+        bool ignoreQueryFilters = false,
+        bool ignoreAutoInclude = false);
 
     Task<TEntity?> GetFirstOrDefaultAsync(
+        Expression<Func<TEntity, bool>>? predicate = null,
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        bool disableQuerySpliting = false,
+        bool disableTracking = false,
+        bool ignoreQueryFilters = false,
+        bool ignoreAutoInclude = false,
+        CancellationToken cancellationToken = default);
+    
+    Task<TResult?> GetFirstOrDefaultAsync<TResult>(
+        Expression<Func<TEntity, TResult>> selector,
         Expression<Func<TEntity, bool>>? predicate = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,

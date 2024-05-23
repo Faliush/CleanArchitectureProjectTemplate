@@ -1,5 +1,6 @@
 ﻿using Domain.Core.Abstractions;
 using Domain.Core.Primitives;
+using Domain.Core.Primitives.Result;
 using Domain.ValueObjects;
 
 namespace Domain.Entities;
@@ -26,6 +27,15 @@ public sealed class User : AggregateRoot, IAuditable
         // this can be domain event
 
         return user;
+    }
+
+    public Result ChangePassword(string passwordHash)
+    {
+        PasswordHash = passwordHash;
+
+        // domain event
+
+        return Result.Success();
     }
 
     public FirstName FirstName { get; private set; }

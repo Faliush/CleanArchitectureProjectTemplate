@@ -6,12 +6,12 @@ using Domain.Core.Primitives.Result;
 using Domain.ValueObjects;
 using Infrastructure.Repositories.Contracts;
 
-namespace Application.Users.Login;
+namespace Application.Users.Commands.Login;
 
 internal sealed class LoginCommandHandler(
-    IUserRepository userRepository, 
+    IUserRepository userRepository,
     IJwtProvider jwtProvider,
-    IPasswordHashChecker passwordHashChecker) 
+    IPasswordHashChecker passwordHashChecker)
         : ICommandHandler<LoginCommand, Result<string>>
 {
     public async Task<Result<string>> Handle(LoginCommand request, CancellationToken cancellationToken)
@@ -24,8 +24,8 @@ internal sealed class LoginCommandHandler(
         }
 
         var user = await userRepository.GetByEmailAsync(email.Value, cancellationToken);
-    
-        if(user is null)
+
+        if (user is null)
         {
             return Result.Failure<string>(DomainErrors.User.InvalidCredentials);
         }

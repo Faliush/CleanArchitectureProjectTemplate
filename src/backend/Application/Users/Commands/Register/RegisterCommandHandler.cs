@@ -8,7 +8,7 @@ using Domain.ValueObjects;
 using Infrastructure.Repositories.Contracts;
 using Infrastructure.UnitOfWork;
 
-namespace Application.Users.Register;
+namespace Application.Users.Commands.Register;
 
 internal sealed class RegisterCommandHandler(
     IUnitOfWork unitOfWork,
@@ -25,19 +25,19 @@ internal sealed class RegisterCommandHandler(
         var emailResult = Email.Create(request.Email);
         var passwrodResult = Password.Create(request.Password);
 
-        var firstFaliureOrSuccess = Result.FirstFailureOrSuccess(firstNameResult,  lastNameResult, emailResult, passwrodResult);
+        var firstFaliureOrSuccess = Result.FirstFailureOrSuccess(firstNameResult, lastNameResult, emailResult, passwrodResult);
 
         if (firstFaliureOrSuccess.IsFailure)
         {
             return Result.Failure<string>(firstFaliureOrSuccess.Error);
         }
 
-        if(!await userRepository.IsEmailUniqueAsync(emailResult.Value, cancellationToken))
+        if (!await userRepository.IsEmailUniqueAsync(emailResult.Value, cancellationToken))
         {
             return Result.Failure<string>(DomainErrors.User.InvalidCredentials);
         }
 
-        if(!await roleRepository.Exists(request.RoleId, cancellationToken))
+        if (!await roleRepository.Exists(request.RoleId, cancellationToken))
         {
             return Result.Failure<string>(DomainErrors.Role.NotFound);
         }

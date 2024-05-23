@@ -7,6 +7,8 @@ public static class DomainErrors
     public static class User
     {
         public static Error InvalidCredentials => new("User.InvalidCredentials", "Invalid email or password");
+        public static Error NotFound => new("User.NotFound", "User not found");
+
     }
 
     public static class Role 
