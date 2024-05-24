@@ -11,14 +11,14 @@ public class PermissionService(ApplicationDbContext context)
     {
         var roles = await context
             .Set<User>()
-            .Include(x => x.Role)
+            .Include(x => x.Roles)
             .ThenInclude(x => x.Permissions)
             .Where(x => x.Id == userId)
-            .Select(x => x.Role)
+            .Select(x => x.Roles)
             .ToArrayAsync();
 
         var permissions = roles
-            .Select(x => x)
+            .SelectMany(x => x)
             .SelectMany(x => x.Permissions)
             .Select(x => x.Name)
             .ToHashSet();

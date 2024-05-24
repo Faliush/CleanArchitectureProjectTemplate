@@ -36,10 +36,11 @@ internal sealed class ChangePasswordCommandHandler(
 
         var passwordHash = passwordHasher.HashPassword(passwordResult.Value);
 
-        var result = user.ChangePassword(passwordHash);
+        user.ChangePassword(passwordHash);
 
+        userRepository.Update(user);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return result;
+        return Result.Success();
     }
 }

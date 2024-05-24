@@ -15,7 +15,7 @@ public class WebApiTests : BaseTests
             .That()
             .ImplementInterface(typeof(ICarterModule))
             .Should()
-            .HaveNameEndingWith("Endpoint")
+            .HaveNameEndingWith("Endpoints")
             .GetResult();
 
         result.IsSuccessful.Should().BeTrue();

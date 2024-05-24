@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
-using Permission = Domain.Enums.Permission;
+using Permissions = Domain.Enums.Permissions;
 
 namespace IntegrationTests.Base;
 
@@ -21,8 +21,8 @@ internal class TestAuthenticationHandler(
         [
             new(JwtRegisteredClaimNames.Sub, Guid.NewGuid().ToString()),
             new(JwtRegisteredClaimNames.Email, "developer@gmail.com"),
-            new(CustomClaim, nameof(Permission.ManageUsers)),
-            new(CustomClaim, nameof(Permission.ReadUsers))
+            new(CustomClaim, nameof(Permissions.ManageUsers)),
+            new(CustomClaim, nameof(Permissions.User))
         ];
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()

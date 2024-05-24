@@ -8,7 +8,8 @@ public static class DomainErrors
     {
         public static Error InvalidCredentials => new("User.InvalidCredentials", "Invalid email or password");
         public static Error NotFound => new("User.NotFound", "User not found");
-
+        public static Error InvalidRefreshToken => new("User.InvalidRefreshToken", "Invalid refresh token or expired time");
+        public static Error InvalidClaims => new("User.InvalidClaims", "Invalid claims");
     }
 
     public static class Role 

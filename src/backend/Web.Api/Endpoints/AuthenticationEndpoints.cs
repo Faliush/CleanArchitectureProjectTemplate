@@ -1,27 +1,28 @@
-﻿using Application.Users.Commands.ChangePassword;
-using Application.Users.Commands.Login;
-using Application.Users.Commands.Register;
-using Application.Users.Queries.GetUserById;
+﻿using Application.Authentication.Commands;
+using Application.Authentication.Commands.Login;
+using Application.Authentication.Commands.RefreshToken;
+using Application.Authentication.Commands.Register;
 using Carter;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.Api.Extentions;
 
 namespace Web.Api.Endpoints;
 
-public class UserEndpoint : ICarterModule
+public class AuthenticationEndpoints : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("users").WithTags("Users");
+        var group = app.MapGroup("authentications").WithTags("Authentications");
 
         group.MapPost("login", Login);
         group.MapPost("register", Register);
-        group.MapGet("{id:guid}", GetById);
-        group.MapPut("{id:guid}/change-password", ChangePassword);
+        group.MapPost("refresh", Refresh);
     }
 
-    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(AuthenticatedResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     private static async Task<IResult> Login(
         HttpContext context,
@@ -34,7 +35,8 @@ public class UserEndpoint : ICarterModule
         return result.IsOk ? Results.Ok(result.Value) : result.ToBadRequestProblem();
     }
 
-    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(AuthenticatedResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     private static async Task<IResult> Register(
         HttpContext context,
@@ -47,30 +49,17 @@ public class UserEndpoint : ICarterModule
         return result.IsOk ? Results.Ok(result.Value) : result.ToBadRequestProblem();
     }
 
-    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    private static async Task<IResult> GetById(
-        HttpContext context,
-        ISender sender,
-        Guid id,
-        CancellationToken cancellationToken)
-    {
-        var result = await sender.Send(new GetUserByIdQuery(id), cancellationToken);
-
-        return result.IsOk ? Results.Ok(result.Value) : result.ToNotFoundProblem();
-    }
-
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(AuthenticatedResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    private static async Task<IResult> ChangePassword(
+    private static async Task<IResult> Refresh(
         HttpContext context,
         ISender sender,
-        Guid Id,
-        ChangePasswordCommand command,
+        RefreshTokenCommand command,
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(command, cancellationToken);
 
-        return result.IsOk ? Results.NoContent() : result.ToBadRequestProblem();
+        return result.IsOk ? Results.Ok(result.Value) : result.ToBadRequestProblem();
     }
 }

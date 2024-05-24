@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Application.Users.Commands.Register;
+namespace Application.Authentication.Commands.Register;
 
 public sealed class RegisterCommandValidator : AbstractValidator<RegisterCommand>
 {
@@ -10,6 +10,5 @@ public sealed class RegisterCommandValidator : AbstractValidator<RegisterCommand
         RuleFor(x => x.LastName).NotEmpty();
         RuleFor(x => x.Email).NotEmpty();
         RuleFor(x => x.Password).NotEmpty();
-        RuleFor(x => x.RoleId).NotEmpty();
     }
 }

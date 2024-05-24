@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Application.Abstractions.Authentication.Attribute;
 
-internal sealed class HasPermissionAttribute(Permission permission)
+public sealed class HasPermissionAttribute(Permissions permission)
     : AuthorizeAttribute(policy: nameof(permission))
 {
 }

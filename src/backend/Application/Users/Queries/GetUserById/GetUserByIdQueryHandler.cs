@@ -14,10 +14,9 @@ internal sealed class GetUserByIdQueryHandler(
     {
         var user = await userRepository.GetFirstOrDefaultAsync(
             predicate: x => x.Id == request.Id,
-            include: i => i.Include(x => x.Role),
             disableTracking: true,
             disableQuerySpliting: false,
-            selector: u => new UserResponse(u.Id, u.FirstName, u.LastName, u.FullName, u.Email, u.CreatedOnUtc, u.Role.Name),
+            selector: u => new UserResponse(u.Id, u.FirstName, u.LastName, u.FullName, u.Email, u.CreatedOnUtc),
             cancellationToken: cancellationToken);
 
         if (user is null)

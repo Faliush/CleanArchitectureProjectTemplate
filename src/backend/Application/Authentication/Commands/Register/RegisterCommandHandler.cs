@@ -8,17 +8,16 @@ using Domain.ValueObjects;
 using Infrastructure.Repositories.Contracts;
 using Infrastructure.UnitOfWork;
 
-namespace Application.Users.Commands.Register;
+namespace Application.Authentication.Commands.Register;
 
 internal sealed class RegisterCommandHandler(
     IUnitOfWork unitOfWork,
     IUserRepository userRepository,
-    IRoleRepository roleRepository,
     IPasswordHasher passwordHasher,
     IJwtProvider jwtProvider)
-        : ICommandHandler<RegisterCommand, Result<string>>
+        : ICommandHandler<RegisterCommand, Result<AuthenticatedResponse>>
 {
-    public async Task<Result<string>> Handle(RegisterCommand request, CancellationToken cancellationToken)
+    public async Task<Result<AuthenticatedResponse>> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
         var firstNameResult = FirstName.Create(request.FirstName);
         var lastNameResult = LastName.Create(request.LastName);
@@ -29,28 +28,28 @@ internal sealed class RegisterCommandHandler(
 
         if (firstFaliureOrSuccess.IsFailure)
         {
-            return Result.Failure<string>(firstFaliureOrSuccess.Error);
+            return Result.Failure<AuthenticatedResponse>(firstFaliureOrSuccess.Error);
         }
 
         if (!await userRepository.IsEmailUniqueAsync(emailResult.Value, cancellationToken))
         {
-            return Result.Failure<string>(DomainErrors.User.InvalidCredentials);
-        }
-
-        if (!await roleRepository.Exists(request.RoleId, cancellationToken))
-        {
-            return Result.Failure<string>(DomainErrors.Role.NotFound);
+            return Result.Failure<AuthenticatedResponse>(DomainErrors.User.InvalidCredentials);
         }
 
         var hasherPassword = passwordHasher.HashPassword(passwrodResult.Value);
 
-        var user = User.Create(firstNameResult.Value, lastNameResult.Value, emailResult.Value, hasherPassword, request.RoleId);
+        var user = User.Create(firstNameResult.Value, lastNameResult.Value, emailResult.Value, hasherPassword);
 
+        user.AddToRoles(Role.Registered);
+
+        string accesToken = await jwtProvider.GenerateAccessTokenAsync(user);
+        string refreshToken = jwtProvider.GenerateRefreshToken();
+
+        user.SetRefreshToken(refreshToken);
+        
         await userRepository.InsertAsync(user, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        string token = await jwtProvider.Generate(user);
-
-        return Result.Success(token);
+        return Result.Success(new AuthenticatedResponse(accesToken, refreshToken));
     }
 }
