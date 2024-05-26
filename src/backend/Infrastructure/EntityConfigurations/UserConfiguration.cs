@@ -52,6 +52,7 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Ignore(user => user.FullName);
 
         builder.HasMany(x => x.Roles)
-            .WithMany(x => x.Users);
+            .WithMany(x => x.Users)
+            .UsingEntity<UserRole>();
     }
 }

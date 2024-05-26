@@ -14,7 +14,9 @@ public static class DomainErrors
 
     public static class Role 
     {
-        public static Error NotFound => new("Role.NotFound", "Given role id doesn't exist");
+        public static Error NotFound => new("Role.NotFound", "Given role doesn't exist");
+        public static Error NullOrEmpty => new("Role.NullOrEmpty", "Name is required");
+        public static Error LongerThanAllowed => new("RoleLongerThanAllowed", "Role name is longer than allowed");
     }
 
     public static class FirstName

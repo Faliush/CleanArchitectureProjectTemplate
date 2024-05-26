@@ -45,14 +45,28 @@ public sealed class User : AggregateRoot, IAuditable
 
     public Result AddToRoles(params Role[] roles)
     {
-        Roles.AddRange(roles);
+        foreach (var role in roles)
+        {
+            if (!Roles.Contains(role))
+            {
+                Roles.Add(role);
+            }
+        }
 
         return Result.Success();
     }
 
     public Result RemoveRoles(params Role[] roles)
     {
-        Roles.AddRange(roles);
+        foreach(var role in roles)
+        {
+            if (!Roles.Contains(role))
+            {
+                return Result.Failure(DomainErrors.Role.NotFound);
+            }
+
+            Roles.Remove(role);
+        }
 
         return Result.Success();
     }
@@ -93,5 +107,5 @@ public sealed class User : AggregateRoot, IAuditable
 
     public DateTime RefreshTokenExpiryTime { get; private set; }
 
-    public List<Role> Roles { get; } = [];
+    public ICollection<Role> Roles { get; } = [];
 }

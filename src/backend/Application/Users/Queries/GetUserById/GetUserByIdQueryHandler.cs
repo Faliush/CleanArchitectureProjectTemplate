@@ -2,7 +2,6 @@
 using Domain.Core.Errors;
 using Domain.Core.Primitives.Result;
 using Infrastructure.Repositories.Contracts;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Users.Queries.GetUserById;
 

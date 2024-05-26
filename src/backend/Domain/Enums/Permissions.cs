@@ -5,11 +5,15 @@ public enum Permissions
 {
     None = 0,
 
-    ManageUsers = 1 << 0, //1
+    User = 1 << 0, //1
 
-    User = 1 << 1, //2
+    ManageUsers = 1 << 1, //2
 
-    // << 2 // 4
+    ReadRolesPermissions = 1 << 2, // 4
+
+    ManageRoles = 1 << 3, // 8
+
+    // << 4 // 16
 
     All = ~None
 }

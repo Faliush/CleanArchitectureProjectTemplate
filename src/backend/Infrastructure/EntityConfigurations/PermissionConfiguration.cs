@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,7 +13,7 @@ internal sealed class PermissionConfiguration : IEntityTypeConfiguration<Permiss
 
         builder.HasKey(x => x.Id);
 
-        var permissions = Enum.GetValues<Domain.Enums.Permissions>()
+        var permissions = Enum.GetValues<Permissions>()
                               .Select(p => new Permission 
                               { 
                                   Id = (int)p, 
