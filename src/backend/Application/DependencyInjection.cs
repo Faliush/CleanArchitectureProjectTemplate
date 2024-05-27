@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Authentication.Jwt;
 using Application.Abstractions.Authentication.PermissionService;
 using Application.Abstractions.Behaviors;
+using Application.Abstractions.Caching;
 using Application.Abstractions.Cryptography;
 using Application.Abstractions.Events;
 using FluentValidation;
@@ -37,6 +38,9 @@ public static class DependencyInjection
         services.AddScoped<IJwtProvider, JwtProvider>();
 
         services.AddScoped<IPermissionService, PermissionService>();
+
+        services.AddDistributedMemoryCache();
+        services.AddSingleton<ICacheService, CacheService>();
 
         return services;
     }

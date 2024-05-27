@@ -62,6 +62,12 @@ builder.Services.ConfigureOptions<ConfigureSwaggerGenOptions>();
 builder.Services.ConfigureOptions<ConfigureJwtOptions>();
 builder.Services.ConfigureOptions<ConfigureJwtBearerOptions>();
 
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    var connection = builder.Configuration.GetConnectionString("Redis");
+    options.Configuration = connection;
+});
+
 builder.Services.AddCarter();
 
 var app = builder.Build();
