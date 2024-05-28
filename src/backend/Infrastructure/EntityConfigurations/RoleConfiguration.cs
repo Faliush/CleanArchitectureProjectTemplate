@@ -23,13 +23,6 @@ internal sealed class RoleConfiguration : IEntityTypeConfiguration<Role>
                 .IsRequired();
         });
 
-        builder.HasMany(x => x.Permissions)
-            .WithMany()
-            .UsingEntity<RolePermission>();
-
-        builder.HasMany(x => x.Users)
-            .WithMany();
-
-        builder.HasData(new {Role.Registered, Role.Administrator}); 
+        builder.HasData(Role.Registered, Role.Administrator); 
     }
 }

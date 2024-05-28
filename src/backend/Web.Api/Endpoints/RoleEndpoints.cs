@@ -24,7 +24,7 @@ public class RoleEndpoints : ICarterModule
         group.MapGet("permissions", GetAllPermissions);
     }
 
-    [HasPermission(Permissions.ReadRolesPermissions | Permissions.ManageRoles)]
+    [HasPermission(Permissions.ManageRoles)]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     private static async Task<IResult> Create(
@@ -38,13 +38,13 @@ public class RoleEndpoints : ICarterModule
         return result.IsOk ? Results.Ok() : result.ToBadRequestProblem();
     }
 
-    [HasPermission(Permissions.ReadRolesPermissions | Permissions.ManageRoles)]
+    [HasPermission(Permissions.ManageRoles)]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     private static async Task<IResult> Delete(
         HttpContext context,
         ISender sender,
-        int id,
+        Guid id,
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(new DeleteRoleCommand(id), cancellationToken);

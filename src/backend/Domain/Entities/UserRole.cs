@@ -3,5 +3,5 @@
 public sealed class UserRole
 {
     public Guid UserId { get; set; }
-    public int RoleId { get; set; }
+    public Guid RoleId { get; set; }
 }

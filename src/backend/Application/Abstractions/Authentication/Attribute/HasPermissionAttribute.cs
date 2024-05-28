@@ -4,6 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 namespace Application.Abstractions.Authentication.Attribute;
 
 public sealed class HasPermissionAttribute(Permissions permission)
-    : AuthorizeAttribute(policy: nameof(permission))
+    : AuthorizeAttribute(policy: permission.ToString())
 {
 }

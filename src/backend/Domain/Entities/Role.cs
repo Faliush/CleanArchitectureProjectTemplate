@@ -1,26 +1,37 @@
-﻿using Domain.ValueObjects;
+﻿using Domain.Core.Primitives;
+using Domain.Enums;
+using Domain.ValueObjects;
 
 namespace Domain.Entities;
 
-public sealed class Role
+public sealed class Role : Entity
 {
-    public static readonly Role Administrator = new(1, Name.Create(nameof(Administrator)).Value);
-    public static readonly Role Registered = new(2, Name.Create(nameof(Registered)).Value);
+    public static readonly Role Administrator = new( 
+        Name.Create(nameof(Administrator)).Value, 
+        [.. Enum.GetValues<Permissions>()]);
 
-    private Role(int id, Name name)
+    public static readonly Role Registered = new(
+        Name.Create(nameof(Registered)).Value, 
+        [Enums.Permissions.User]);
+
+    private Role(Name name, List<Permissions> permissions)
+        : base(Guid.NewGuid())
     {
-        Id = id;
         Name = name;
+        Permissions = permissions;
     }
-
-    public Role(Name name)
-        => Name = name;
 
     private Role() { }  
 
-    public int Id { get; private set; }
+    public static Role Create(Name name, List<Permissions> permissions)
+    {
+        var role = new Role(name, permissions);
+
+        return role;
+    }
+
     public Name Name { get; private set; } 
 
-    public ICollection<Permission>? Permissions { get; set; }
+    public ICollection<Permissions>? Permissions { get; private set; }
     public ICollection<User>? Users { get; set; }
 }

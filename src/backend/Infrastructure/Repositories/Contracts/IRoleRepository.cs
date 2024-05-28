@@ -5,5 +5,5 @@ namespace Infrastructure.Repositories.Contracts;
 
 public interface IRoleRepository : IRepositoryBase<Role>
 {
-    Task<bool> Exists(int id, CancellationToken cancellationToken);
+    Task<bool> Exists(Guid id, CancellationToken cancellationToken);
 }

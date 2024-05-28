@@ -12,7 +12,6 @@ public class PermissionService(ApplicationDbContext context)
         var roles = await context
             .Set<User>()
             .Include(x => x.Roles)
-            .ThenInclude(x => x.Permissions)
             .Where(x => x.Id == userId)
             .Select(x => x.Roles)
             .ToArrayAsync();
@@ -20,7 +19,7 @@ public class PermissionService(ApplicationDbContext context)
         var permissions = roles
             .SelectMany(x => x)
             .SelectMany(x => x.Permissions)
-            .Select(x => x.Name)
+            .Select(x => x.ToString())
             .ToHashSet();
 
         return permissions;

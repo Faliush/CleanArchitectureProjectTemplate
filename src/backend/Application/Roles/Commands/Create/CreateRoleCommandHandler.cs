@@ -21,7 +21,7 @@ internal sealed class CreateRoleCommandHandler(
             return Result.Failure(nameResult.Error);
         }
 
-        var role = new Role(nameResult.Value);
+        var role = Role.Create(nameResult.Value, request.Permissions);
 
         await roleRepository.InsertAsync(role, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);

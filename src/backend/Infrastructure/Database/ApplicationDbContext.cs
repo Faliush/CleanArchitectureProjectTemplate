@@ -7,9 +7,7 @@ namespace Infrastructure.Database;
 public class ApplicationDbContext(DbContextOptions options) : DbContext(options)
 {
     public virtual DbSet<User> Users { get; set; }
-    public virtual DbSet<Permission> Permissions { get; set; }
     public virtual DbSet<Role> Roles { get; set; }
-    public virtual DbSet<RolePermission> RolePermission { get; set; }
     public virtual DbSet<UserRole> UserRole {  get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
