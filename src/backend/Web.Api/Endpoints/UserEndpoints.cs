@@ -1,5 +1,7 @@
 ﻿using Application.Abstractions.Authentication.Attribute;
+using Application.Users.Commands.AddRoles;
 using Application.Users.Commands.ChangePassword;
+using Application.Users.Commands.RemoveRoles;
 using Application.Users.Commands.Update;
 using Application.Users.Queries.GetUserById;
 using Carter;
@@ -19,6 +21,8 @@ public class UserEndpoints : ICarterModule
         group.MapGet("{id:guid}", GetById);
         group.MapPut("{id:guid}/change-password", ChangePassword);
         group.MapPut("{id:guid}", Update);
+        group.MapPost("{id:guid}/roles", AddRoles);
+        group.MapDelete("{id:guid}/roles", RemoveRoles);
     }
 
     [HasPermission(Permissions.User)]
@@ -41,11 +45,12 @@ public class UserEndpoints : ICarterModule
     private static async Task<IResult> ChangePassword(
         HttpContext context,
         ISender sender,
-        Guid Id,
-        ChangePasswordCommand command,
+        [FromRoute]Guid Id,
+        [FromBody]ChangePasswordRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await sender.Send(command, cancellationToken);
+        var result = await sender.Send(
+            new ChangePasswordCommand(Id, request.CurrentPassword, request.NewPassword), cancellationToken);
 
         return result.IsOk ? Results.NoContent() : result.ToBadRequestProblem();
     }
@@ -56,11 +61,44 @@ public class UserEndpoints : ICarterModule
     private static async Task<IResult> Update(
         HttpContext context,
         ISender sender,
-        Guid Id,
-        UpdateUserCommand command,
+        [FromRoute] Guid Id,
+        [FromBody]UpdateUserRequest request, 
         CancellationToken cancellationToken)
     {
-        var result = await sender.Send(command, cancellationToken);
+        var result = await sender.Send(
+            new UpdateUserCommand(Id, request.FirstName, request.LastName), cancellationToken);
+
+        return result.IsOk ? Results.NoContent() : result.ToBadRequestProblem();
+    }
+
+    [HasPermission(Permissions.ManageUsers)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    private static async Task<IResult> AddRoles(
+        HttpContext httpContext,
+        ISender sender,
+        [FromRoute]Guid Id,
+        [FromBody]AddRolesToUserRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(
+            new AddRolesToUserCommand(Id, request.RoleIds), cancellationToken);
+
+        return result.IsOk ? Results.NoContent() : result.ToBadRequestProblem();
+    }
+
+    [HasPermission(Permissions.ManageUsers)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    private static async Task<IResult> RemoveRoles(
+        HttpContext httpContext,
+        ISender sender,
+        [FromRoute] Guid Id, 
+        [FromBody] RemoveRolesFromUserRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(
+            new RemoveRolesFromUserCommand(Id, request.RoleIds), cancellationToken);
 
         return result.IsOk ? Results.NoContent() : result.ToBadRequestProblem();
     }

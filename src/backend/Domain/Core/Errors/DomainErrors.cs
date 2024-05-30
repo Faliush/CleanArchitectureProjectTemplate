@@ -10,13 +10,15 @@ public static class DomainErrors
         public static Error NotFound => new("User.NotFound", "User not found");
         public static Error InvalidRefreshToken => new("User.InvalidRefreshToken", "Invalid refresh token or expired time");
         public static Error InvalidClaims => new("User.InvalidClaims", "Invalid claims");
+        public static Error CannotChangePassword => new("User.CannotChangePassword", "Uncorrect current pussword or new");
     }
 
     public static class Role 
     {
         public static Error NotFound => new("Role.NotFound", "Given role doesn't exist");
         public static Error NullOrEmpty => new("Role.NullOrEmpty", "Name is required");
-        public static Error LongerThanAllowed => new("RoleLongerThanAllowed", "Role name is longer than allowed");
+        public static Error LongerThanAllowed => new("Role.LongerThanAllowed", "Role name is longer than allowed");
+        public static Error CannotCreateRole => new("Role.CannotCreateRole", "Invalid role name or permissions");
     }
 
     public static class FirstName

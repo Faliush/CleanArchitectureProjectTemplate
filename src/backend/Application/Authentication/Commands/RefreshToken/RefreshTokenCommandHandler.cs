@@ -2,15 +2,14 @@
 using Application.Abstractions.Messaging;
 using Domain.Core.Errors;
 using Domain.Core.Primitives.Result;
-using Infrastructure.Repositories.Contracts;
-using Infrastructure.UnitOfWork;
+using Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace Application.Authentication.Commands.RefreshToken;
 
 internal sealed class RefreshTokenCommandHandler(
-    IUserRepository userRepository,
-    IUnitOfWork unitOfWork,
+    UserManager<User> userManager,
     IJwtProvider jwtProvider) 
     : ICommandHandler<RefreshTokenCommand, Result<AuthenticatedResponse>>
 {
@@ -26,11 +25,7 @@ internal sealed class RefreshTokenCommandHandler(
             return Result.Failure<AuthenticatedResponse>(DomainErrors.User.InvalidClaims);
         }
 
-        var user = await userRepository.GetFirstOrDefaultAsync(
-            predicate: x => x.Id == parsedUserId,
-            disableTracking: false,
-            disableQuerySpliting: true,
-            cancellationToken: cancellationToken);
+        var user = await userManager.FindByIdAsync(userId);
 
         if(user is null)
         {
@@ -49,8 +44,7 @@ internal sealed class RefreshTokenCommandHandler(
 
         user.SetRefreshToken(refreshToken);
 
-        userRepository.Update(user);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        await userManager.UpdateAsync(user);
 
         return Result.Success(new AuthenticatedResponse(accesToken, refreshToken));
     }

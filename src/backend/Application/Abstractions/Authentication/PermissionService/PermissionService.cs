@@ -1,25 +1,18 @@
 ﻿using Domain.Entities;
-using Infrastructure.Database;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace Application.Abstractions.Authentication.PermissionService;
 
-public class PermissionService(ApplicationDbContext context)
+public class PermissionService(UserManager<User> userManager, RoleManager<Role> roleManager)
     : IPermissionService
 {
-    public async Task<HashSet<string>> GetPermissionsAsync(Guid userId)
-    {
-        var roles = await context
-            .Set<User>()
-            .Include(x => x.Roles)
-            .Where(x => x.Id == userId)
-            .Select(x => x.Roles)
-            .ToArrayAsync();
+    public async Task<HashSet<string>> GetPermissionsAsync(User user)
+    { 
+        var roleNames = await userManager.GetRolesAsync(user);
 
-        var permissions = roles
-            .SelectMany(x => x)
-            .SelectMany(x => x.Permissions)
-            .Select(x => x.ToString())
+        var permissions = roleManager.Roles
+            .Where(x => roleNames.Contains(x.Name!))
+            .Select(x => x.Permissions!.ToString())
             .ToHashSet();
 
         return permissions;

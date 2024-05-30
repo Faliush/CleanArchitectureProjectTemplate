@@ -1,5 +1,5 @@
 ﻿using Domain.Entities;
-using Domain.ValueObjects;
+using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,16 +13,12 @@ internal sealed class RoleConfiguration : IEntityTypeConfiguration<Role>
 
         builder.HasKey(x => x.Id);
 
-        builder.OwnsOne(role => role.Name, nameBuilder =>
-        {
-            nameBuilder.WithOwner();
+        builder.Property(x => x.Name)
+            .IsRequired()
+            .HasMaxLength(100);
 
-            nameBuilder.Property(x => x.Value)
-                .HasColumnName(nameof(Name))
-                .HasMaxLength(Name.MaxLength)
-                .IsRequired();
-        });
-
-        builder.HasData(Role.Registered, Role.Administrator); 
+        builder.HasData(
+            new Role { Id = Guid.NewGuid(), Name = "Registered", Permissions = [Permissions.User] },
+            new Role { Id = Guid.NewGuid(), Name = "Administrator", Permissions = [.. Enum.GetValues<Permissions>()] });
     }
 }

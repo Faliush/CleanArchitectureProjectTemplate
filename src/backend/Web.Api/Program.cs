@@ -3,7 +3,9 @@ using Application.Abstractions.Authentication;
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using Carter;
+using Domain.Entities;
 using Infrastructure;
+using Infrastructure.Database;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -50,6 +52,14 @@ builder.Services.AddApiVersioning(options =>
     options.GroupNameFormat = "'v'V";
     options.SubstituteApiVersionInUrl = true;
 });
+
+builder.Services.AddIdentity<User, Role>(config =>
+{
+    config.Password.RequireNonAlphanumeric = false;
+    config.Password.RequiredLength = 5;
+    config.Password.RequiredUniqueChars = 3;
+    config.Password.RequireUppercase = false;
+}).AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer();
