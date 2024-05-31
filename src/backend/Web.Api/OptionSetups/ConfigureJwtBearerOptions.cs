@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-namespace Web.Api.OptionsSetup;
+namespace Web.Api.OptionSetups;
 
 public class ConfigureJwtBearerOptions : IConfigureOptions<JwtBearerOptions>
 {

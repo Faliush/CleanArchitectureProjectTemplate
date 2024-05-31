@@ -11,8 +11,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Serilog;
 using Web.Api.Middlewares;
-using Web.Api.OpenApi;
-using Web.Api.OptionsSetup;
+using Web.Api.OptionSetups;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,6 +69,7 @@ builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionAuthorizat
 
 builder.Services.ConfigureOptions<ConfigureSwaggerGenOptions>();
 builder.Services.ConfigureOptions<ConfigureJwtOptions>();
+builder.Services.ConfigureOptions<ConfigureGoogleOptions>();
 builder.Services.ConfigureOptions<ConfigureJwtBearerOptions>();
 
 builder.Services.AddStackExchangeRedisCache(options =>

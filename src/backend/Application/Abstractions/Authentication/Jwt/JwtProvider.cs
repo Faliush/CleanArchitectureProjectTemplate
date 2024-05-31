@@ -1,6 +1,9 @@
 ﻿using Application.Abstractions.Authentication.Claims;
+using Application.Abstractions.Authentication.Google;
 using Application.Abstractions.Authentication.PermissionService;
 using Domain.Entities;
+using Google.Apis.Auth;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -10,13 +13,17 @@ using System.Text;
 
 namespace Application.Abstractions.Authentication.Jwt;
 
-internal sealed class JwtProvider : IJwtProvider
+internal sealed class JwtProvider(
+    IOptions<JwtOptions> jwtOptions, 
+    IOptions<GoogleOptions> googleOptions, 
+    IPermissionService permissionService, 
+    ILogger<JwtProvider> logger) : IJwtProvider
 {
-    private readonly JwtOptions _jwtOptions;
-    private readonly IPermissionService _permissionService;
-
-    public JwtProvider(IOptions<JwtOptions> options, IPermissionService permissionService)
-        => (_jwtOptions,_permissionService)  = (options.Value, permissionService);
+    private readonly JwtOptions _jwtOptions = jwtOptions.Value;
+    private readonly GoogleOptions _googleOptions = googleOptions.Value;
+    private readonly IPermissionService _permissionService = permissionService;
+    private readonly ILogger<JwtProvider> _logger = logger;
+    
 
     public async Task<string> GenerateAccessTokenAsync(User user)
     {
@@ -86,5 +93,24 @@ internal sealed class JwtProvider : IJwtProvider
         }
 
         return principal;
+    }
+
+    public async Task<GoogleJsonWebSignature.Payload> VerifyGoogleTokenAsync(string idToken)
+    {
+        try
+        {
+            var settings = new GoogleJsonWebSignature.ValidationSettings()
+            {
+                Audience = [_googleOptions.ClientId]
+            };
+            var payload = await GoogleJsonWebSignature.ValidateAsync(idToken, settings);
+
+            return payload;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            return null;
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Google.Apis.Auth;
 using System.Security.Claims;
 namespace Application.Abstractions.Authentication.Jwt;
 
@@ -9,4 +10,6 @@ public interface IJwtProvider
     string GenerateRefreshToken();
 
     ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
+
+    Task<GoogleJsonWebSignature.Payload> VerifyGoogleTokenAsync(string idToken);
 }

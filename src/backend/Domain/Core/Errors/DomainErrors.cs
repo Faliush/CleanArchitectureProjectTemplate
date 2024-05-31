@@ -7,6 +7,7 @@ public static class DomainErrors
     public static class User
     {
         public static Error InvalidCredentials => new("User.InvalidCredentials", "Invalid email or password");
+        public static Error InvalidExternalAuthentication => new("User.InvalidExternalAuthentication", "Invalid External Authentication");
         public static Error NotFound => new("User.NotFound", "User not found");
         public static Error InvalidRefreshToken => new("User.InvalidRefreshToken", "Invalid refresh token or expired time");
         public static Error InvalidClaims => new("User.InvalidClaims", "Invalid claims");

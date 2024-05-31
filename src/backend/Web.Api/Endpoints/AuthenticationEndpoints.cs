@@ -1,4 +1,5 @@
 ﻿using Application.Authentication.Commands;
+using Application.Authentication.Commands.GoogleSignIn;
 using Application.Authentication.Commands.Login;
 using Application.Authentication.Commands.RefreshToken;
 using Application.Authentication.Commands.Register;
@@ -19,6 +20,7 @@ public class AuthenticationEndpoints : ICarterModule
         group.MapPost("login", Login);
         group.MapPost("register", Register);
         group.MapPost("refresh", Refresh);
+        group.MapPost("google-signin", GoogleSignIn);
     }
 
     [AllowAnonymous]
@@ -42,6 +44,20 @@ public class AuthenticationEndpoints : ICarterModule
         HttpContext context,
         ISender sender,
         RegisterCommand command,
+        CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(command, cancellationToken);
+
+        return result.IsOk ? Results.Ok(result.Value) : result.ToBadRequestProblem();
+    }
+
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(AuthenticatedResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    private static async Task<IResult> GoogleSignIn(
+        HttpContext context,
+        ISender sender,
+        GoogleSignInCommand command,
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(command, cancellationToken);
