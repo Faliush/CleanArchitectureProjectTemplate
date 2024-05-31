@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Authentication.Jwt;
+using Application.Abstractions.EmailSender;
 using Application.Abstractions.Messaging;
 using Domain.Core.Errors;
 using Domain.Core.Primitives.Result;
@@ -9,7 +10,8 @@ namespace Application.Authentication.Commands.Register;
 
 internal sealed class RegisterCommandHandler(
     UserManager<User> userManager,
-    IJwtProvider jwtProvider)
+    IJwtProvider jwtProvider,
+    IEmailSender emailSender)
         : ICommandHandler<RegisterCommand, Result<AuthenticatedResponse>>
 {
     public async Task<Result<AuthenticatedResponse>> Handle(RegisterCommand request, CancellationToken cancellationToken)
@@ -37,6 +39,11 @@ internal sealed class RegisterCommandHandler(
         user.SetRefreshToken(refreshToken);
 
         await userManager.UpdateAsync(user);
+
+        await emailSender.SendAsync(
+            user.Email,
+            "Successfully Registered!",
+            "Thank you for registering with us. We're excited to have you on board!");
 
         return Result.Success(new AuthenticatedResponse(accesToken, refreshToken));
     }

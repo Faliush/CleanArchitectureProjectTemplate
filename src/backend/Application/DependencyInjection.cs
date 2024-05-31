@@ -3,6 +3,7 @@ using Application.Abstractions.Authentication.PermissionService;
 using Application.Abstractions.Behaviors;
 using Application.Abstractions.Caching;
 using Application.Abstractions.Cryptography;
+using Application.Abstractions.EmailSender;
 using Application.Abstractions.Events;
 using FluentValidation;
 using MediatR;
@@ -41,6 +42,8 @@ public static class DependencyInjection
 
         services.AddDistributedMemoryCache();
         services.AddSingleton<ICacheService, CacheService>();
+
+        services.AddTransient<IEmailSender, EmailSender>();
 
         return services;
     }
