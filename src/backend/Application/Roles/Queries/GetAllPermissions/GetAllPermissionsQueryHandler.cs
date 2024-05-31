@@ -6,12 +6,12 @@ using Infrastructure.Repositories.Contracts;
 namespace Application.Roles.Queries.GetAllPermissions;
 
 internal sealed class GetAllPermissionsQueryHandler
-    : IQueryHandler<GetAllPermissionsQuery, Result>
+    : IQueryHandler<GetAllPermissionsQuery, Result<List<Permissions>>>
 {
-    public async Task<Result> Handle(GetAllPermissionsQuery request, CancellationToken cancellationToken)
+    public Task<Result<List<Permissions>>> Handle(GetAllPermissionsQuery request, CancellationToken cancellationToken)
     {
-        var permissions = Enum.GetValues<Permissions>();
+        var permissions = Enum.GetValues<Permissions>().ToList();
 
-        return Result.Success(permissions);
+        return Task.FromResult(Result.Success(permissions));
     }
 }

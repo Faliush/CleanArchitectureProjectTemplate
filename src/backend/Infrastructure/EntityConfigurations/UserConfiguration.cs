@@ -1,5 +1,4 @@
 ﻿using Domain.Entities;
-using Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,35 +12,17 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.HasKey(x => x.Id);
 
-        builder.OwnsOne(user => user.FirstName, firstNameBuider =>
-        {
-            firstNameBuider.WithOwner();
+        builder.Property(x => x.FirstName)
+            .IsRequired()
+            .HasMaxLength(100);
 
-            firstNameBuider.Property(x => x.Value)
-                .HasColumnName(nameof(FirstName))
-                .HasMaxLength(FirstName.MaxLength)
-                .IsRequired();
-        });
+        builder.Property(x => x.LastName)
+            .IsRequired()
+            .HasMaxLength(100);
 
-        builder.OwnsOne(user => user.LastName, lastNameBuilder =>
-        {
-            lastNameBuilder.WithOwner();
-
-            lastNameBuilder.Property(x => x.Value)
-                .HasColumnName(nameof(LastName))
-                .HasMaxLength(LastName.MaxLength)
-                .IsRequired();
-        });
-
-        builder.OwnsOne(user => user.Email, emailBuilder =>
-        {
-            emailBuilder.WithOwner();
-
-            emailBuilder.Property(x => x.Value)
-                .HasColumnName(nameof(Email))
-                .HasMaxLength(Email.MaxLength)
-                .IsRequired();
-        });
+        builder.Property(x => x.Email)
+            .IsRequired()
+            .HasMaxLength(100);
 
         builder.Property(user => user.PasswordHash).IsRequired();
 
@@ -50,9 +31,5 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(user => user.ModifiedOnUtc);
 
         builder.Ignore(user => user.FullName);
-
-        builder.HasMany(x => x.Roles)
-            .WithMany(x => x.Users)
-            .UsingEntity<UserRole>();
     }
 }

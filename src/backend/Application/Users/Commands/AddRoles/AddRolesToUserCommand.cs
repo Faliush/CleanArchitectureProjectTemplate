@@ -3,4 +3,4 @@ using Domain.Core.Primitives.Result;
 
 namespace Application.Users.Commands.AddRoles;
 
-public sealed record AddRolesCommand : ICommand<Result>;
+public sealed record AddRolesToUserCommand(Guid UserId, List<Guid> RoleIds) : ICommand<Result>;

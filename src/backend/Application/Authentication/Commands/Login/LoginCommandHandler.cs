@@ -3,36 +3,30 @@ using Application.Abstractions.Cryptography;
 using Application.Abstractions.Messaging;
 using Domain.Core.Errors;
 using Domain.Core.Primitives.Result;
+using Domain.Entities;
 using Domain.ValueObjects;
 using Infrastructure.Repositories.Contracts;
+using Microsoft.AspNetCore.Identity;
 
 namespace Application.Authentication.Commands.Login;
 
 internal sealed class LoginCommandHandler(
-    IUserRepository userRepository,
-    IJwtProvider jwtProvider,
-    IPasswordHashChecker passwordHashChecker)
+    UserManager<User> userManager,
+    IJwtProvider jwtProvider)
         : ICommandHandler<LoginCommand, Result<AuthenticatedResponse>>
 {
     public async Task<Result<AuthenticatedResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
-        var email = Email.Create(request.Email);
-
-        if (email.IsFailure)
-        {
-            return Result.Failure<AuthenticatedResponse>(DomainErrors.User.InvalidCredentials);
-        }
-
-        var user = await userRepository.GetByEmailAsync(email.Value, cancellationToken);
+        var user = await userManager.FindByEmailAsync(request.Email);
 
         if (user is null)
         {
             return Result.Failure<AuthenticatedResponse>(DomainErrors.User.InvalidCredentials);
         }
 
-        var validPassword = passwordHashChecker.HashesMatch(user.PasswordHash, request.Password);
+        var isValidPassword = await userManager.CheckPasswordAsync(user, request.Password);
 
-        if (!validPassword)
+        if (!isValidPassword)
         {
             return Result.Failure<AuthenticatedResponse>(DomainErrors.User.InvalidCredentials);
         }

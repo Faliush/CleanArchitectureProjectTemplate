@@ -1,45 +1,32 @@
-﻿using Application.Abstractions.Cryptography;
-using Application.Abstractions.Messaging;
+﻿using Application.Abstractions.Messaging;
 using Domain.Core.Errors;
 using Domain.Core.Primitives.Result;
-using Domain.ValueObjects;
-using Infrastructure.Repositories.Contracts;
-using Infrastructure.UnitOfWork;
+using Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace Application.Users.Commands.ChangePassword;
 
 internal sealed class ChangePasswordCommandHandler(
-    IUserRepository userRepository,
-    IUnitOfWork unitOfWork,
-    IPasswordHasher passwordHasher)    
+    UserManager<User> userManager)    
         : ICommandHandler<ChangePasswordCommand, Result>
 {
     public async Task<Result> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
     {
-        var passwordResult = Password.Create(request.Password);
-
-        if (passwordResult.IsFailure)
-        {
-            return Result.Failure(DomainErrors.User.InvalidCredentials);
-        }
-
-        var user = await userRepository.GetFirstOrDefaultAsync(
-            predicate: x => x.Id == request.Id,
-            disableTracking: false,
-            disableQuerySpliting: true,
-            cancellationToken: cancellationToken);
+        var user = await userManager.FindByIdAsync(request.Id.ToString());
 
         if (user is null)
         {
             return Result.Failure(DomainErrors.User.NotFound);
         }
 
-        var passwordHash = passwordHasher.HashPassword(passwordResult.Value);
+        var result = await userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
 
-        user.ChangePassword(passwordHash);
+        if (!result.Succeeded)
+        {
+            return Result.Failure(DomainErrors.User.CannotChangePassword);
+        }
 
-        userRepository.Update(user);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        await userManager.UpdateAsync(user);
 
         return Result.Success();
     }

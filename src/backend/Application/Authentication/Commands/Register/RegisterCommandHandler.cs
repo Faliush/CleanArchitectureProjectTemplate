@@ -1,54 +1,42 @@
 ﻿using Application.Abstractions.Authentication.Jwt;
-using Application.Abstractions.Cryptography;
 using Application.Abstractions.Messaging;
 using Domain.Core.Errors;
 using Domain.Core.Primitives.Result;
 using Domain.Entities;
-using Domain.ValueObjects;
-using Infrastructure.Repositories.Contracts;
-using Infrastructure.UnitOfWork;
+using Microsoft.AspNetCore.Identity;
 
 namespace Application.Authentication.Commands.Register;
 
 internal sealed class RegisterCommandHandler(
-    IUnitOfWork unitOfWork,
-    IUserRepository userRepository,
-    IPasswordHasher passwordHasher,
+    UserManager<User> userManager,
     IJwtProvider jwtProvider)
         : ICommandHandler<RegisterCommand, Result<AuthenticatedResponse>>
 {
     public async Task<Result<AuthenticatedResponse>> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
-        var firstNameResult = FirstName.Create(request.FirstName);
-        var lastNameResult = LastName.Create(request.LastName);
-        var emailResult = Email.Create(request.Email);
-        var passwrodResult = Password.Create(request.Password);
+        var isEmailUnique = await userManager.FindByEmailAsync(request.Email) is null;
 
-        var firstFaliureOrSuccess = Result.FirstFailureOrSuccess(firstNameResult, lastNameResult, emailResult, passwrodResult);
-
-        if (firstFaliureOrSuccess.IsFailure)
-        {
-            return Result.Failure<AuthenticatedResponse>(firstFaliureOrSuccess.Error);
-        }
-
-        if (!await userRepository.IsEmailUniqueAsync(emailResult.Value, cancellationToken))
+        if (!isEmailUnique)
         {
             return Result.Failure<AuthenticatedResponse>(DomainErrors.User.InvalidCredentials);
         }
 
-        var hasherPassword = passwordHasher.HashPassword(passwrodResult.Value);
+        var user = new User { FirstName = request.FirstName, LastName = request.LastName, Email = request.Email };
 
-        var user = User.Create(firstNameResult.Value, lastNameResult.Value, emailResult.Value, hasherPassword);
+        var userCreatedResult = await userManager.CreateAsync(user, request.Password);
 
-        user.AddToRoles(Role.Registered);
+        if (!userCreatedResult.Succeeded)
+        {
+            return Result.Failure<AuthenticatedResponse>(DomainErrors.User.InvalidCredentials);
+        }
+        await userManager.AddToRoleAsync(user, "Registered");
 
         string accesToken = await jwtProvider.GenerateAccessTokenAsync(user);
         string refreshToken = jwtProvider.GenerateRefreshToken();
 
         user.SetRefreshToken(refreshToken);
-        
-        await userRepository.InsertAsync(user, cancellationToken);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        await userManager.UpdateAsync(user);
 
         return Result.Success(new AuthenticatedResponse(accesToken, refreshToken));
     }
