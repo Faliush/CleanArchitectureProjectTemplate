@@ -8,7 +8,7 @@ namespace Application.Roles.Commands.Create;
 
 internal sealed class CreateRoleCommandHandler(
     RoleManager<Role> roleManager)
-    : ICommandHandler<CreateRoleCommand, Result>
+    : ICommandHandler<CreateRoleCommand>
 {
     public async Task<Result> Handle(CreateRoleCommand request, CancellationToken cancellationToken)
     {

@@ -10,7 +10,7 @@ namespace Application.Users.Commands.RemoveRoles;
 internal sealed class RemoveRolesFromUserCommandHandler(
     UserManager<User> userManager,
     RoleManager<Role> roleManager) 
-    : ICommandHandler<RemoveRolesFromUserCommand, Result>
+    : ICommandHandler<RemoveRolesFromUserCommand>
 {
     public async Task<Result> Handle(RemoveRolesFromUserCommand request, CancellationToken cancellationToken)
     {

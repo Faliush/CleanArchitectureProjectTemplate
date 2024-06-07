@@ -8,7 +8,7 @@ namespace Application.Users.Commands.Update;
 
 internal sealed class UpdateUserCommandHandler(
     UserManager<User> userManager) 
-    : ICommandHandler<UpdateUserCommand, Result>
+    : ICommandHandler<UpdateUserCommand>
 {
     public async Task<Result> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {

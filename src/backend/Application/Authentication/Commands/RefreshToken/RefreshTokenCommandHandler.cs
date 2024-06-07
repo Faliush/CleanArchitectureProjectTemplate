@@ -11,7 +11,7 @@ namespace Application.Authentication.Commands.RefreshToken;
 internal sealed class RefreshTokenCommandHandler(
     UserManager<User> userManager,
     IJwtProvider jwtProvider) 
-    : ICommandHandler<RefreshTokenCommand, Result<AuthenticatedResponse>>
+    : ICommandHandler<RefreshTokenCommand, AuthenticatedResponse>
 {
     public async Task<Result<AuthenticatedResponse>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {

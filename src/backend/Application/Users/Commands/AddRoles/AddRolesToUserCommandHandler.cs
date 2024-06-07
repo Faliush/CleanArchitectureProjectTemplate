@@ -10,7 +10,7 @@ namespace Application.Users.Commands.AddRoles;
 internal sealed class AddRolesToUserCommandHandler(
     UserManager<User> userManager,
     RoleManager<Role> roleManager) 
-    : ICommandHandler<AddRolesToUserCommand, Result>
+    : ICommandHandler<AddRolesToUserCommand>
 {
     public async Task<Result> Handle(AddRolesToUserCommand request, CancellationToken cancellationToken)
     {

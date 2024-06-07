@@ -12,7 +12,7 @@ internal sealed class RegisterCommandHandler(
     UserManager<User> userManager,
     IJwtProvider jwtProvider,
     IEmailSender emailSender)
-        : ICommandHandler<RegisterCommand, Result<AuthenticatedResponse>>
+        : ICommandHandler<RegisterCommand, AuthenticatedResponse>
 {
     public async Task<Result<AuthenticatedResponse>> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {

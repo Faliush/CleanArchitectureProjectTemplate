@@ -1,7 +1,9 @@
-﻿using MediatR;
+﻿using Domain.Core.Primitives.Result;
+using MediatR;
 
 namespace Application.Abstractions.Messaging;
 
-public interface IQuery<out TResponse> : IRequest<TResponse>
+public interface IQuery<TResponse> : IRequest<Result<TResponse>>
+    where TResponse : class
 {
 }

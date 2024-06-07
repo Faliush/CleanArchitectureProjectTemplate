@@ -12,9 +12,9 @@ internal sealed class GoogleSignInCommandHandler(
     UserManager<User> userManager,
     IJwtProvider jwtProvider,
     IEmailSender emailSender)
-    : ICommandHandler<GoogleSignInCommand, Result>
+    : ICommandHandler<GoogleSignInCommand, AuthenticatedResponse>
 {
-    public async Task<Result> Handle(GoogleSignInCommand request, CancellationToken cancellationToken)
+    public async Task<Result<AuthenticatedResponse>> Handle(GoogleSignInCommand request, CancellationToken cancellationToken)
     {
         var payload = await jwtProvider.VerifyGoogleTokenAsync(request.IdToken);
 

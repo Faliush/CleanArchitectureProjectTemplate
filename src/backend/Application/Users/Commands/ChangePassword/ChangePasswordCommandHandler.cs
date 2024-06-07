@@ -10,7 +10,7 @@ namespace Application.Users.Commands.ChangePassword;
 internal sealed class ChangePasswordCommandHandler(
     UserManager<User> userManager,
     IEmailSender emailSender)    
-        : ICommandHandler<ChangePasswordCommand, Result>
+        : ICommandHandler<ChangePasswordCommand>
 {
     public async Task<Result> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
     {

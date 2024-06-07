@@ -1,11 +1,8 @@
 ﻿using Application.Abstractions.Authentication.Jwt;
-using Application.Abstractions.Cryptography;
 using Application.Abstractions.Messaging;
 using Domain.Core.Errors;
 using Domain.Core.Primitives.Result;
 using Domain.Entities;
-using Domain.ValueObjects;
-using Infrastructure.Repositories.Contracts;
 using Microsoft.AspNetCore.Identity;
 
 namespace Application.Authentication.Commands.Login;
@@ -13,7 +10,7 @@ namespace Application.Authentication.Commands.Login;
 internal sealed class LoginCommandHandler(
     UserManager<User> userManager,
     IJwtProvider jwtProvider)
-        : ICommandHandler<LoginCommand, Result<AuthenticatedResponse>>
+        : ICommandHandler<LoginCommand, AuthenticatedResponse>
 {
     public async Task<Result<AuthenticatedResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
     {

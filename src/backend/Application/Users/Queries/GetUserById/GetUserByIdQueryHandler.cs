@@ -8,7 +8,7 @@ namespace Application.Users.Queries.GetUserById;
 
 internal sealed class GetUserByIdQueryHandler(
     UserManager<User> userManager)
-        : IQueryHandler<GetUserByIdQuery, Result<UserResponse>>
+        : IQueryHandler<GetUserByIdQuery, UserResponse>
 {
     public async Task<Result<UserResponse>> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {

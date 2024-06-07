@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore;
 namespace Application.Roles.Queries.GetAll;
 
 internal sealed class GetAllRolesQueryHandler(RoleManager<Role> roleManager)
-    : IQueryHandler<GetAllRolesQuery, Result>
+    : IQueryHandler<GetAllRolesQuery, List<RoleResponse>>
 {
-    public async Task<Result> Handle(GetAllRolesQuery request, CancellationToken cancellationToken)
+    public async Task<Result<List<RoleResponse>>> Handle(GetAllRolesQuery request, CancellationToken cancellationToken)
     {
         var roles = await roleManager.Roles
             .Select(x => new RoleResponse 

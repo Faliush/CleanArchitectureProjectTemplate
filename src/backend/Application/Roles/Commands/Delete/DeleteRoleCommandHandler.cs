@@ -8,7 +8,7 @@ namespace Application.Roles.Commands.Delete;
 
 internal sealed class DeleteRoleCommandHandler(
     RoleManager<Role> roleManager) 
-    : ICommandHandler<DeleteRoleCommand, Result>
+    : ICommandHandler<DeleteRoleCommand>
 {
     public async Task<Result> Handle(DeleteRoleCommand request, CancellationToken cancellationToken)
     {
