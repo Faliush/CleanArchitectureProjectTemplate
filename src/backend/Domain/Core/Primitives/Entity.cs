@@ -1,15 +1,25 @@
 ﻿using Domain.Core.Abstractions;
+using Domain.Core.Events;
 
 namespace Domain.Core.Primitives;
 
 public abstract class Entity : IHaveId, IEquatable<Entity>
 {
+    private readonly List<IDomainEvent> _domainEvents = [];
+    
     protected Entity(Guid id)
         : this() => Id = id;
 
     protected Entity() {  }
 
     public Guid Id { get; private init; }
+
+
+    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+
+    public void ClearDomainEvents() => _domainEvents.Clear();
+
+    protected void AddDomainEvent(IDomainEvent @event) => _domainEvents.Add(@event);
 
     public static bool operator == (Entity first, Entity second)
         => first is not null && second is not null && first.Equals(second);

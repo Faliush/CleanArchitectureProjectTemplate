@@ -5,14 +5,14 @@ using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Database;
 
-public class MigrationService : BackgroundService
+public class ProccessMigrationsJob : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
-    private readonly ILogger<MigrationService> _logger;
+    private readonly ILogger<ProccessMigrationsJob> _logger;
 
-    public MigrationService(
+    public ProccessMigrationsJob(
         IServiceProvider serviceProvider,
-        ILogger<MigrationService> logger)
+        ILogger<ProccessMigrationsJob> logger)
     {
         _serviceProvider = serviceProvider;
         _logger = logger;

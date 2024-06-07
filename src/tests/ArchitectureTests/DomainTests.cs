@@ -43,7 +43,7 @@ public class DomainTests : BaseTests
         var entityTypes = Types
             .InAssembly(DomainAssembly)
             .That()
-            .Inherit(typeof(AggregateRoot))
+            .Inherit(typeof(Entity))
             .GetTypes();
 
         var failingTypes = new List<Type>();

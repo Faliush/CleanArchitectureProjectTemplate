@@ -107,7 +107,7 @@ internal sealed class DbSaveChangesInterceptor : SaveChangesInterceptor
     {
         var outboxMessages = context
             .ChangeTracker
-            .Entries<AggregateRoot>()
+            .Entries<Entity>()
             .Select(entry => entry.Entity)
             .SelectMany(entity =>
             {
