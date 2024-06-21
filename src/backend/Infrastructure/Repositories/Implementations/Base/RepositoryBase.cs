@@ -9,14 +9,10 @@ namespace Infrastructure.Repositories.Implementations.Base;
 
 internal abstract class RepositoryBase<TEntity> : IRepositoryBase<TEntity> where TEntity : class
 {
-    protected readonly DbContext _dbContext;
     protected readonly DbSet<TEntity> _dbSet;
 
-    protected RepositoryBase(DbContext dbContext)
-    {
-        _dbContext = dbContext;
-        _dbSet = _dbContext.Set<TEntity>();
-    }
+    protected RepositoryBase(DbContext dbContext) => 
+        _dbSet = dbContext.Set<TEntity>();
 
     public IQueryable<TEntity> GetAll(
         Expression<Func<TEntity, bool>>? predicate = null,
