@@ -6,14 +6,14 @@ using System.Text;
 
 namespace Web.Api.OptionSetups;
 
-public class ConfigureJwtBearerOptions : IConfigureOptions<JwtBearerOptions>
+public class ConfigureJwtBearerOptions : IPostConfigureOptions<JwtBearerOptions>
 {
     private readonly JwtOptions _jwtOptions;
 
     public ConfigureJwtBearerOptions(IOptions<JwtOptions> options) 
         => _jwtOptions = options.Value;
 
-    public void Configure(JwtBearerOptions options)
+    public void PostConfigure(string? name, JwtBearerOptions options)
     {
         options.TokenValidationParameters = new()
         {
