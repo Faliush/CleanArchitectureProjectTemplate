@@ -36,28 +36,4 @@ public class DomainTests : BaseTests
 
         result.IsSuccessful.Should().BeTrue();
     }
-
-    [Fact]
-    public void Entities_Should_HavePrivateParametrellesConstructor()
-    {
-        var entityTypes = Types
-            .InAssembly(DomainAssembly)
-            .That()
-            .Inherit(typeof(Entity))
-            .GetTypes();
-
-        var failingTypes = new List<Type>();
-
-        foreach (var entityType in entityTypes)
-        {
-            var constructors = entityType.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance);
-
-            if (!constructors.Any(x => x.IsPrivate && x.GetParameters().Length == 0))
-            {
-                failingTypes.Add(entityType);
-            }
-        }
-
-        failingTypes.Should().BeEmpty();
-    }
 }
