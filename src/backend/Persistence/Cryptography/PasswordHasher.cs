@@ -1,6 +1,5 @@
 ﻿using System.Security.Cryptography;
 using Application.Abstractions.Cryptography;
-using Domain.ValueObjects;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace Persistence.Cryptography;
@@ -15,7 +14,7 @@ internal sealed class PasswordHasher : IPasswordHasher, IPasswordHashChecker, ID
 
     public PasswordHasher() => _rng = new RNGCryptoServiceProvider();
 
-    public string HashPassword(Password password)
+    public string HashPassword(string password)
     {
         ArgumentNullException.ThrowIfNull(password);
 

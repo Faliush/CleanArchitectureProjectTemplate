@@ -1,13 +1,10 @@
-﻿using Application.Users.Commands.AddRoles;
-using Application.Users.Commands.ChangePassword;
-using Application.Users.Commands.RemoveRoles;
+﻿using Application.Users.Commands.ChangePassword;
+using Application.Users.Commands.SetRoles;
 using Application.Users.Commands.Update;
 using Application.Users.Queries.GetUserById;
 using Carter;
-using Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Persistence.Authentication.Attribute;
 using Web.Api.Extentions;
 
 namespace Web.Api.Endpoints;
@@ -21,11 +18,9 @@ public class UserEndpoints : ICarterModule
         group.MapGet("{id:guid}", GetById);
         group.MapPut("{id:guid}/change-password", ChangePassword);
         group.MapPut("{id:guid}", Update);
-        group.MapPost("{id:guid}/roles", AddRoles);
-        group.MapDelete("{id:guid}/roles", RemoveRoles);
+        group.MapPost("{id:guid}/roles", SetRoles);
     }
 
-    [HasPermission(Permissions.User)]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     private static async Task<IResult> GetById(
@@ -39,7 +34,6 @@ public class UserEndpoints : ICarterModule
         return result.IsOk ? Results.Ok(result.Value) : result.ToNotFoundProblem();
     }
 
-    [HasPermission(Permissions.User)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     private static async Task<IResult> ChangePassword(
@@ -55,14 +49,13 @@ public class UserEndpoints : ICarterModule
         return result.IsOk ? Results.NoContent() : result.ToBadRequestProblem();
     }
 
-    [HasPermission(Permissions.User)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     private static async Task<IResult> Update(
         HttpContext context,
         ISender sender,
         [FromRoute] Guid Id,
-        [FromBody]UpdateUserRequest request, 
+        [FromBody] UpdateUserRequest request, 
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(
@@ -71,34 +64,17 @@ public class UserEndpoints : ICarterModule
         return result.IsOk ? Results.NoContent() : result.ToBadRequestProblem();
     }
 
-    [HasPermission(Permissions.ManageUsers)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    private static async Task<IResult> AddRoles(
+    private static async Task<IResult> SetRoles(
         HttpContext httpContext,
         ISender sender,
-        [FromRoute]Guid Id,
-        [FromBody]AddRolesToUserRequest request,
+        [FromRoute] Guid Id,
+        [FromBody] SetRolesToUserRequest request,
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(
-            new AddRolesToUserCommand(Id, request.RoleIds), cancellationToken);
-
-        return result.IsOk ? Results.NoContent() : result.ToBadRequestProblem();
-    }
-
-    [HasPermission(Permissions.ManageUsers)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    private static async Task<IResult> RemoveRoles(
-        HttpContext httpContext,
-        ISender sender,
-        [FromRoute] Guid Id, 
-        [FromBody] RemoveRolesFromUserRequest request,
-        CancellationToken cancellationToken)
-    {
-        var result = await sender.Send(
-            new RemoveRolesFromUserCommand(Id, request.RoleIds), cancellationToken);
+            new SetRolesToUserCommand(Id, request.RoleIds), cancellationToken);
 
         return result.IsOk ? Results.NoContent() : result.ToBadRequestProblem();
     }

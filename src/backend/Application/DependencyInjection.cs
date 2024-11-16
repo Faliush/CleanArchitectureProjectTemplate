@@ -1,10 +1,4 @@
-﻿using Application.Abstractions.Authentication.Jwt;
-using Application.Abstractions.Authentication.PermissionService;
-using Application.Abstractions.Behaviors;
-using Application.Abstractions.Caching;
-using Application.Abstractions.Cryptography;
-using Application.Abstractions.EmailSender;
-using Application.Abstractions.Events;
+﻿using Application.Abstractions.Behaviors;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;

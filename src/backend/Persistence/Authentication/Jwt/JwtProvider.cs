@@ -3,26 +3,21 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Application.Abstractions.Authentication.Jwt;
-using Application.Abstractions.Authentication.PermissionService;
 using Domain.Entities;
-using Google.Apis.Auth;
+using Domain.Repositories;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Persistence.Authentication.Claims;
-using Persistence.Authentication.Google;
 
 namespace Persistence.Authentication.Jwt;
 
 internal sealed class JwtProvider(
     IOptions<JwtOptions> jwtOptions, 
-    IOptions<GoogleOptions> googleOptions, 
-    IPermissionService permissionService, 
+    IUserRepository userRepository,
     ILogger<JwtProvider> logger) : IJwtProvider
 {
     private readonly JwtOptions _jwtOptions = jwtOptions.Value;
-    private readonly GoogleOptions _googleOptions = googleOptions.Value;
-    private readonly IPermissionService _permissionService = permissionService;
     private readonly ILogger<JwtProvider> _logger = logger;
     
 
@@ -35,12 +30,9 @@ internal sealed class JwtProvider(
         };
 
         // for permissions in jwt token
-        var permissions = await _permissionService.GetPermissionsAsync(user);
+        var permissions = await userRepository.GetPermissions(user.Id, CancellationToken.None);
 
-        foreach (var permission in permissions)
-        {
-            claims.Add(new(CustomClaims.Permission, permission));
-        }
+        claims.AddRange(permissions.Select(permission => new Claim(CustomClaims.Permission, permission)));
         //
 
         var signinCredentials = new SigningCredentials(
@@ -94,24 +86,5 @@ internal sealed class JwtProvider(
         }
 
         return principal;
-    }
-
-    public async Task<GoogleJsonWebSignature.Payload> VerifyGoogleTokenAsync(string idToken)
-    {
-        try
-        {
-            var settings = new GoogleJsonWebSignature.ValidationSettings()
-            {
-                Audience = [_googleOptions.ClientId]
-            };
-            var payload = await GoogleJsonWebSignature.ValidateAsync(idToken, settings);
-
-            return payload;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, ex.Message);
-            return null;
-        }
     }
 }

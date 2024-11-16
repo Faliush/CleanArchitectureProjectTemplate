@@ -1,12 +1,10 @@
 using Application.Abstractions.Authentication.Jwt;
-using Application.Abstractions.Authentication.PermissionService;
 using Application.Abstractions.Caching;
 using Application.Abstractions.Cryptography;
 using Application.Abstractions.EmailSender;
 using Application.Abstractions.Events;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Authentication.Jwt;
-using Persistence.Authentication.PermisionService;
 using Persistence.Caching;
 using Persistence.Cryptography;
 using Persistence.Events;
@@ -19,8 +17,6 @@ public static class DependencyInjection
     {
         services.AddScoped<IJwtProvider, JwtProvider>();
 
-        services.AddScoped<IPermissionService, PermissionService>();
-        
         services.AddDistributedMemoryCache();
         services.AddSingleton<ICacheService, CacheService>();
         

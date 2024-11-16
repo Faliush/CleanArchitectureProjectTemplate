@@ -15,8 +15,10 @@ public class PermissionAuthorizationPolicyProvider(IOptions<AuthorizationOptions
             return policy;
         }
 
+        var permissions = policyName.Split(',');
+
         return new AuthorizationPolicyBuilder()
-            .AddRequirements(new PermissionRequirement(policyName))
+            .AddRequirements(new PermissionRequirement(permissions))
             .Build();
     }
 }

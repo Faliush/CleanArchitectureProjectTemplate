@@ -1,12 +1,9 @@
-﻿using Application.Abstractions.Authentication.Jwt;
-using Application.Abstractions.Authentication.PermissionService;
-using Application.Abstractions.Caching;
-using Application.Abstractions.Cryptography;
-using Application.Abstractions.EmailSender;
-using Application.Abstractions.Events;
+﻿using Domain.Repositories;
+using Domain.UnitOfWork;
 using Infrastructure.Database;
 using Infrastructure.Interceptors;
 using Infrastructure.Outbox;
+using Infrastructure.Repositories;
 using Infrastructure.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -42,6 +39,10 @@ public static class DependencyInjection
 
         services.AddScoped<IUnitOfWork<ApplicationDbContext>,  UnitOfWork<ApplicationDbContext>>();
         services.AddScoped<IUnitOfWork, UnitOfWork<ApplicationDbContext>>();
+
+        services.AddScoped<IPermissionRepository, PermissionRepository>();
+        services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
 
         return services;
     }

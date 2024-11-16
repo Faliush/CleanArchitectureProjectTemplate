@@ -5,11 +5,15 @@ using Domain.Core.Primitives.Result;
 using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Domain.Repositories;
+using Domain.UnitOfWork;
 
 namespace Application.Authentication.Commands.RefreshToken;
 
 internal sealed class RefreshTokenCommandHandler(
-    UserManager<User> userManager,
+    IUserRepository userRepository,
+    IUnitOfWork unitOfWork,
     IJwtProvider jwtProvider) 
     : ICommandHandler<RefreshTokenCommand, AuthenticatedResponse>
 {
@@ -18,14 +22,17 @@ internal sealed class RefreshTokenCommandHandler(
         var principal = jwtProvider.GetPrincipalFromExpiredToken(request.AccessToken);
         
         var userId = principal.Claims
-            .FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub)?.Value;
+            .FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub || x.Type == ClaimTypes.NameIdentifier)?.Value;
 
-        if (!Guid.TryParse(userId, out Guid parsedUserId))
+        if (!Guid.TryParse(userId, out var parsedUserId))
         {
             return Result.Failure<AuthenticatedResponse>(DomainErrors.User.InvalidClaims);
         }
 
-        var user = await userManager.FindByIdAsync(userId);
+        var user = await userRepository.GetFirstOrDefaultAsync(
+            predicate: x => x.Id == parsedUserId,
+            disableQuerySpliting: true,
+            cancellationToken: cancellationToken);
 
         if(user is null)
         {
@@ -39,12 +46,14 @@ internal sealed class RefreshTokenCommandHandler(
             return Result.Failure<AuthenticatedResponse>(DomainErrors.User.InvalidRefreshToken);
         }
 
-        string accesToken = await jwtProvider.GenerateAccessTokenAsync(user);
-        string refreshToken = jwtProvider.GenerateRefreshToken();
+        var accesToken = await jwtProvider.GenerateAccessTokenAsync(user);
+        var refreshToken = jwtProvider.GenerateRefreshToken();
 
         user.SetRefreshToken(refreshToken);
 
-        await userManager.UpdateAsync(user);
+        userRepository.Update(user);
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success(new AuthenticatedResponse(accesToken, refreshToken));
     }

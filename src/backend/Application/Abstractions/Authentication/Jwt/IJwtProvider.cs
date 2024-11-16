@@ -10,6 +10,4 @@ public interface IJwtProvider
     string GenerateRefreshToken();
 
     ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
-
-    Task<GoogleJsonWebSignature.Payload> VerifyGoogleTokenAsync(string idToken);
 }

@@ -24,7 +24,6 @@ public class RoleEndpoints : ICarterModule
         group.MapGet("permissions", GetAllPermissions);
     }
 
-    [HasPermission(Permissions.ManageRoles)]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     private static async Task<IResult> Create(
@@ -38,7 +37,6 @@ public class RoleEndpoints : ICarterModule
         return result.IsOk ? Results.Ok() : result.ToBadRequestProblem();
     }
 
-    [HasPermission(Permissions.ManageRoles)]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     private static async Task<IResult> Delete(
@@ -52,7 +50,6 @@ public class RoleEndpoints : ICarterModule
         return result.IsOk ? Results.NoContent() : result.ToBadRequestProblem();
     }
 
-    [HasPermission(Permissions.ReadRolesPermissions)]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     private static async Task<IResult> GetAll(
@@ -65,7 +62,6 @@ public class RoleEndpoints : ICarterModule
         return result.IsOk ? Results.Ok() : result.ToBadRequestProblem();
     }
 
-    [HasPermission(Permissions.ReadRolesPermissions)]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     private static async Task<IResult> GetAllPermissions(

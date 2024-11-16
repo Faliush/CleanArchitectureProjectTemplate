@@ -55,14 +55,6 @@ builder.Services.AddApiVersioning(options =>
     options.SubstituteApiVersionInUrl = true;
 });
 
-builder.Services.AddIdentity<User, Role>(config =>
-{
-    config.Password.RequireNonAlphanumeric = false;
-    config.Password.RequiredLength = 5;
-    config.Password.RequiredUniqueChars = 3;
-    config.Password.RequireUppercase = false;
-}).AddEntityFrameworkStores<ApplicationDbContext>();
-
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer();
 
@@ -72,7 +64,6 @@ builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionAuthorizat
 
 builder.Services.ConfigureOptions<ConfigureSwaggerGenOptions>();
 builder.Services.ConfigureOptions<ConfigureJwtOptions>();
-builder.Services.ConfigureOptions<ConfigureGoogleOptions>();
 builder.Services.ConfigureOptions<ConfigureJwtBearerOptions>();
 
 builder.Services.AddStackExchangeRedisCache(options =>

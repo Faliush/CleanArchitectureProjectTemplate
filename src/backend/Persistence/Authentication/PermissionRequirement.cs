@@ -2,8 +2,8 @@
 
 namespace Persistence.Authentication;
 
-public class PermissionRequirement(string permission) 
+public class PermissionRequirement(string[] permissions) 
     : IAuthorizationRequirement
 {
-    public string Permission { get; } = permission;
+    public IEnumerable<string> AllowedPermissions { get; } = permissions;
 }

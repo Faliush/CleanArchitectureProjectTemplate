@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Persistence.Authentication.Attribute;
 
-public sealed class HasPermissionAttribute(Permissions permission)
-    : AuthorizeAttribute(policy: permission.ToString())
+public sealed class HasPermissionAttribute(params Permissions[] permissions)
+    : AuthorizeAttribute(policy: string.Join(',', permissions))
 {
 }

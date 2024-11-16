@@ -2,24 +2,29 @@
 using Domain.Core.Errors;
 using Domain.Core.Primitives.Result;
 using Domain.Entities;
+using Domain.Repositories;
+using Domain.UnitOfWork;
 using Microsoft.AspNetCore.Identity;
 
 namespace Application.Roles.Commands.Create;
 
 internal sealed class CreateRoleCommandHandler(
-    RoleManager<Role> roleManager)
+    IRoleRepository roleRepository,
+    IPermissionRepository permissionRepository,
+    IUnitOfWork unitOfWork)
     : ICommandHandler<CreateRoleCommand>
 {
     public async Task<Result> Handle(CreateRoleCommand request, CancellationToken cancellationToken)
     {
-        var role = new Role { Name = request.Name, Permissions = request.Permissions };
+        var permissions = await permissionRepository.GetAllAsync(
+            predicate: x => request.PermissionIds.Contains(x.Id), 
+            cancellationToken: cancellationToken);
+        
+        var role = new Role { Name = request.Name, Permissions = permissions };
 
-        var result = await roleManager.CreateAsync(role);
+        await roleRepository.InsertAsync(role, cancellationToken);
 
-        if (!result.Succeeded)
-        {
-            return Result.Failure(DomainErrors.Role.CannotCreateRole);
-        }
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }

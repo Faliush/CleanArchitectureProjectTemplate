@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Infrastructure.UnitOfWork;
+namespace Domain.UnitOfWork;
 
 public interface IUnitOfWork<out TContext>
     : IUnitOfWork where TContext : DbContext
