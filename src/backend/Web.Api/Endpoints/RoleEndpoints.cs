@@ -18,14 +18,25 @@ public class RoleEndpoints : ICarterModule
     {
         var group = app.MapGroup("roles").WithTags("Roles");
 
-        group.MapPost("", Create);
-        group.MapDelete("{id:int}", Delete);
-        group.MapGet("", GetAll);
-        group.MapGet("permissions", GetAllPermissions);
+        group.MapPost("", Create)
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .RequirePermission(Permissions.FullAccess);
+        
+        group.MapDelete("{id:guid}", Delete)
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status400BadRequest)
+            .RequirePermission(Permissions.FullAccess);
+        
+        group.MapGet("", GetAll)
+            .Produces(StatusCodes.Status200OK)
+            .RequirePermission(Permissions.FullAccess);
+        
+        group.MapGet("permissions", GetAllPermissions)
+            .Produces(StatusCodes.Status200OK)
+            .RequirePermission(Permissions.FullAccess);
     }
-
-    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    
     private static async Task<IResult> Create(
         HttpContext context,
         ISender sender,
@@ -36,9 +47,7 @@ public class RoleEndpoints : ICarterModule
 
         return result.IsOk ? Results.Ok() : result.ToBadRequestProblem();
     }
-
-    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    
     private static async Task<IResult> Delete(
         HttpContext context,
         ISender sender,
@@ -49,9 +58,7 @@ public class RoleEndpoints : ICarterModule
 
         return result.IsOk ? Results.NoContent() : result.ToBadRequestProblem();
     }
-
-    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    
     private static async Task<IResult> GetAll(
         HttpContext context,
         ISender sender,
@@ -59,11 +66,9 @@ public class RoleEndpoints : ICarterModule
     {
         var result = await sender.Send(new GetAllRolesQuery(), cancellationToken);
 
-        return result.IsOk ? Results.Ok() : result.ToBadRequestProblem();
+        return Results.Ok(result.Value);
     }
-
-    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    
     private static async Task<IResult> GetAllPermissions(
         HttpContext context,
         ISender sender,
@@ -71,6 +76,6 @@ public class RoleEndpoints : ICarterModule
     {
         var result = await sender.Send(new GetAllPermissionsQuery(), cancellationToken);
 
-        return result.IsOk ? Results.Ok() : result.ToBadRequestProblem();
+        return Results.Ok(result.Value);
     }
 }

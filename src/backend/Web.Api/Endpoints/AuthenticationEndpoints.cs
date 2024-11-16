@@ -4,8 +4,6 @@ using Application.Authentication.Commands.RefreshToken;
 using Application.Authentication.Commands.Register;
 using Carter;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Web.Api.Extentions;
 
 namespace Web.Api.Endpoints;
@@ -16,14 +14,22 @@ public class AuthenticationEndpoints : ICarterModule
     {
         var group = app.MapGroup("authentications").WithTags("Authentications");
 
-        group.MapPost("login", Login);
-        group.MapPost("register", Register);
-        group.MapPost("refresh", Refresh);
+        group.MapPost("login", Login)
+            .Produces(StatusCodes.Status200OK, typeof(AuthenticatedResponse))
+            .Produces(StatusCodes.Status400BadRequest)
+            .AllowAnonymous();
+        
+        group.MapPost("register", Register)
+            .Produces(StatusCodes.Status200OK, typeof(AuthenticatedResponse))
+            .Produces(StatusCodes.Status400BadRequest)
+            .AllowAnonymous();
+        
+        group.MapPost("refresh", Refresh)
+            .Produces(StatusCodes.Status200OK, typeof(AuthenticatedResponse))
+            .Produces(StatusCodes.Status400BadRequest)
+            .AllowAnonymous();;
     }
-
-    [AllowAnonymous]
-    [ProducesResponseType(typeof(AuthenticatedResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    
     private static async Task<IResult> Login(
         HttpContext context,
         ISender sender,
@@ -34,10 +40,7 @@ public class AuthenticationEndpoints : ICarterModule
 
         return result.IsOk ? Results.Ok(result.Value) : result.ToBadRequestProblem();
     }
-
-    [AllowAnonymous]
-    [ProducesResponseType(typeof(AuthenticatedResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    
     private static async Task<IResult> Register(
         HttpContext context,
         ISender sender,
@@ -48,10 +51,7 @@ public class AuthenticationEndpoints : ICarterModule
 
         return result.IsOk ? Results.Ok(result.Value) : result.ToBadRequestProblem();
     }
-
-    [AllowAnonymous]
-    [ProducesResponseType(typeof(AuthenticatedResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    
     private static async Task<IResult> Refresh(
         HttpContext context,
         ISender sender,

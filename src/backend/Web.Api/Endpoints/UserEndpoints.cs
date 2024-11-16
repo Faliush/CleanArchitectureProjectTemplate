@@ -15,14 +15,27 @@ public class UserEndpoints : ICarterModule
     {
         var group = app.MapGroup("users").WithTags("Users");
 
-        group.MapGet("{id:guid}", GetById);
-        group.MapPut("{id:guid}/change-password", ChangePassword);
-        group.MapPut("{id:guid}", Update);
-        group.MapPost("{id:guid}/roles", SetRoles);
+        group.MapGet("{id:guid}", GetById)
+            .Produces(StatusCodes.Status200OK, typeof(UserResponse))
+            .Produces(StatusCodes.Status404NotFound)
+            .RequireAuthorization();
+        
+        group.MapPut("{id:guid}/change-password", ChangePassword)
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status400BadRequest)
+            .RequireAuthorization();
+        
+        group.MapPut("{id:guid}", Update)
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status404NotFound)
+            .RequireAuthorization();
+        
+        group.MapPost("{id:guid}/roles", SetRoles)
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status400BadRequest)
+            .RequireAuthorization();
     }
-
-    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    
     private static async Task<IResult> GetById(
         HttpContext context,
         ISender sender,
@@ -33,48 +46,42 @@ public class UserEndpoints : ICarterModule
 
         return result.IsOk ? Results.Ok(result.Value) : result.ToNotFoundProblem();
     }
-
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    
     private static async Task<IResult> ChangePassword(
         HttpContext context,
         ISender sender,
-        [FromRoute]Guid Id,
-        [FromBody]ChangePasswordRequest request,
+        [FromRoute] Guid id,
+        [FromBody] ChangePasswordRequest request,
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(
-            new ChangePasswordCommand(Id, request.CurrentPassword, request.NewPassword), cancellationToken);
+            new ChangePasswordCommand(id, request.CurrentPassword, request.NewPassword), cancellationToken);
 
         return result.IsOk ? Results.NoContent() : result.ToBadRequestProblem();
     }
-
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    
     private static async Task<IResult> Update(
         HttpContext context,
         ISender sender,
-        [FromRoute] Guid Id,
+        [FromRoute] Guid id,
         [FromBody] UpdateUserRequest request, 
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(
-            new UpdateUserCommand(Id, request.FirstName, request.LastName), cancellationToken);
+            new UpdateUserCommand(id, request.FirstName, request.LastName), cancellationToken);
 
-        return result.IsOk ? Results.NoContent() : result.ToBadRequestProblem();
+        return result.IsOk ? Results.NoContent() : result.ToNotFoundProblem();
     }
-
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    
     private static async Task<IResult> SetRoles(
         HttpContext httpContext,
         ISender sender,
-        [FromRoute] Guid Id,
+        [FromRoute] Guid id,
         [FromBody] SetRolesToUserRequest request,
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(
-            new SetRolesToUserCommand(Id, request.RoleIds), cancellationToken);
+            new SetRolesToUserCommand(id, request.RoleIds), cancellationToken);
 
         return result.IsOk ? Results.NoContent() : result.ToBadRequestProblem();
     }
