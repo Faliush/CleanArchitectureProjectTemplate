@@ -1,5 +1,4 @@
-﻿using Application.Abstractions.Authentication.Attribute;
-using Application.Roles.Commands.Create;
+﻿using Application.Roles.Commands.Create;
 using Application.Roles.Commands.Delete;
 using Application.Roles.Queries.GetAll;
 using Application.Roles.Queries.GetAllPermissions;
@@ -8,6 +7,7 @@ using Carter;
 using Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Persistence.Authentication.Attribute;
 using Web.Api.Extentions;
 
 namespace Web.Api.Endpoints;

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 
-namespace Application.Abstractions.Authentication;
+namespace Persistence.Authentication;
 
 public class PermissionAuthorizationPolicyProvider(IOptions<AuthorizationOptions> options) 
     : DefaultAuthorizationPolicyProvider(options)

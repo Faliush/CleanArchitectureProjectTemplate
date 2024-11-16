@@ -1,5 +1,5 @@
-﻿using Application.Abstractions.Authentication.Google;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
+using Persistence.Authentication.Google;
 
 namespace Web.Api.OptionSetups;
 

@@ -1,25 +1,26 @@
 ﻿using System.Net;
 using System.Net.Mail;
+using Application.Abstractions.EmailSender;
 
-namespace Application.Abstractions.EmailSender;
+namespace Persistence.EmailSender;
 
 internal sealed class EmailSender : IEmailSender
 {
-    private const string _mail = "email@gmail.com";
-    private const string _password = "password";
+    private const string Mail = "email@gmail.com";
+    private const string Password = "password";
 
     public Task SendAsync(string email, string subject, string message)
     {
         var smtpClient = new SmtpClient("smtp.gmail.com", 587)
         {
-            Credentials = new NetworkCredential(_mail, _password),
+            Credentials = new NetworkCredential(Mail, Password),
             EnableSsl = true
         };
 
         var body = GetHtmlBody(message);
 
         var mailMessage = new MailMessage(
-            from: _mail,
+            from: Mail,
             to: email,
             subject: subject,
             body: body);

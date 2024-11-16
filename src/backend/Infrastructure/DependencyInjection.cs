@@ -1,4 +1,10 @@
-﻿using Infrastructure.Database;
+﻿using Application.Abstractions.Authentication.Jwt;
+using Application.Abstractions.Authentication.PermissionService;
+using Application.Abstractions.Caching;
+using Application.Abstractions.Cryptography;
+using Application.Abstractions.EmailSender;
+using Application.Abstractions.Events;
+using Infrastructure.Database;
 using Infrastructure.Interceptors;
 using Infrastructure.Outbox;
 using Infrastructure.UnitOfWork;

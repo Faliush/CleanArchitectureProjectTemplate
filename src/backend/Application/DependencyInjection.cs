@@ -28,23 +28,7 @@ public static class DependencyInjection
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBihavior<,>));
-
-        services.AddSingleton<InMemmoryMessageQueue>();
-        services.AddSingleton<IEventBus, EventBus>();
-        services.AddHostedService<IntegrationEventProcessorJob>();
-
-        services.AddScoped<IPasswordHasher, PasswordHasher>();
-        services.AddScoped<IPasswordHashChecker, PasswordHasher>();
-
-        services.AddScoped<IJwtProvider, JwtProvider>();
-
-        services.AddScoped<IPermissionService, PermissionService>();
-
-        services.AddDistributedMemoryCache();
-        services.AddSingleton<ICacheService, CacheService>();
-
-        services.AddTransient<IEmailSender, EmailSender>();
-
+        
         return services;
     }
 }

@@ -1,7 +1,7 @@
-﻿
-using System.Threading.Channels;
+﻿using System.Threading.Channels;
+using Application.Abstractions.Events;
 
-namespace Application.Abstractions.Events;
+namespace Persistence.Events;
 
 internal sealed class InMemmoryMessageQueue
 {

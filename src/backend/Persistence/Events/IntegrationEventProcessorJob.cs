@@ -1,8 +1,9 @@
-﻿using MediatR;
+﻿using Application.Abstractions.Events;
+using MediatR;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Application.Abstractions.Events;
+namespace Persistence.Events;
 
 internal sealed class IntegrationEventProcessorJob(
     InMemmoryMessageQueue queue,

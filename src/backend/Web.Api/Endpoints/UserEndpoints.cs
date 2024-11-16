@@ -1,5 +1,4 @@
-﻿using Application.Abstractions.Authentication.Attribute;
-using Application.Users.Commands.AddRoles;
+﻿using Application.Users.Commands.AddRoles;
 using Application.Users.Commands.ChangePassword;
 using Application.Users.Commands.RemoveRoles;
 using Application.Users.Commands.Update;
@@ -8,6 +7,7 @@ using Carter;
 using Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Persistence.Authentication.Attribute;
 using Web.Api.Extentions;
 
 namespace Web.Api.Endpoints;

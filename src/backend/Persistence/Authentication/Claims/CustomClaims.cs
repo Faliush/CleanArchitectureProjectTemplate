@@ -1,4 +1,4 @@
-﻿namespace Application.Abstractions.Authentication.Claims;
+﻿namespace Persistence.Authentication.Claims;
 
 internal static class CustomClaims
 {

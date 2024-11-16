@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Authentication.Jwt;
 using Microsoft.Extensions.Options;
+using Persistence.Authentication.Jwt;
 
 namespace Web.Api.OptionSetups;
 

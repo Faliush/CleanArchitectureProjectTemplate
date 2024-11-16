@@ -1,4 +1,4 @@
-﻿namespace Application.Abstractions.Authentication.Google;
+﻿namespace Persistence.Authentication.Google;
 
 public class GoogleOptions
 {

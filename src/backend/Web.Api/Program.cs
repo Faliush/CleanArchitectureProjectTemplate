@@ -9,6 +9,8 @@ using Infrastructure.Database;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Persistence;
+using Persistence.Authentication;
 using Serilog;
 using Web.Api.Middlewares;
 using Web.Api.OptionSetups;
@@ -20,6 +22,7 @@ builder.Host.UseSerilog((context, loggerConfig) =>
 
 builder.Services
     .AddApplication()
+    .AddPersistence()
     .AddInfrastructure(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();

@@ -1,8 +1,7 @@
-﻿using Application.Abstractions.Authentication.Claims;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
+using Persistence.Authentication.Claims;
 
-
-namespace Application.Abstractions.Authentication;
+namespace Persistence.Authentication;
 
 public class PermissionAuthorizationHandler
     : AuthorizationHandler<PermissionRequirement>

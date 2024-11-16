@@ -1,7 +1,8 @@
-﻿using Domain.Entities;
+﻿using Application.Abstractions.Authentication.PermissionService;
+using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 
-namespace Application.Abstractions.Authentication.PermissionService;
+namespace Persistence.Authentication.PermisionService;
 
 public class PermissionService(UserManager<User> userManager, RoleManager<Role> roleManager)
     : IPermissionService

@@ -1,8 +1,9 @@
-﻿using Domain.ValueObjects;
+﻿using System.Security.Cryptography;
+using Application.Abstractions.Cryptography;
+using Domain.ValueObjects;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using System.Security.Cryptography;
 
-namespace Application.Abstractions.Cryptography;
+namespace Persistence.Cryptography;
 
 internal sealed class PasswordHasher : IPasswordHasher, IPasswordHashChecker, IDisposable
 {

@@ -1,4 +1,6 @@
-﻿namespace Application.Abstractions.Events;
+﻿using Application.Abstractions.Events;
+
+namespace Persistence.Events;
 
 internal sealed class EventBus(InMemmoryMessageQueue queue) : IEventBus
 {

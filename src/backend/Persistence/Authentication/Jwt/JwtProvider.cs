@@ -1,17 +1,18 @@
-﻿using Application.Abstractions.Authentication.Claims;
-using Application.Abstractions.Authentication.Google;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
+using Application.Abstractions.Authentication.Jwt;
 using Application.Abstractions.Authentication.PermissionService;
 using Domain.Entities;
 using Google.Apis.Auth;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
+using Persistence.Authentication.Claims;
+using Persistence.Authentication.Google;
 
-namespace Application.Abstractions.Authentication.Jwt;
+namespace Persistence.Authentication.Jwt;
 
 internal sealed class JwtProvider(
     IOptions<JwtOptions> jwtOptions, 

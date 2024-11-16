@@ -1,4 +1,4 @@
-﻿namespace Application.Abstractions.Authentication.Jwt;
+﻿namespace Persistence.Authentication.Jwt;
 
 public class JwtOptions
 {
