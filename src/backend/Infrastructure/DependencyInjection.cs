@@ -1,8 +1,6 @@
 ﻿using Infrastructure.Database;
 using Infrastructure.Interceptors;
 using Infrastructure.Outbox;
-using Infrastructure.Repositories.Contracts;
-using Infrastructure.Repositories.Implementations;
 using Infrastructure.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;

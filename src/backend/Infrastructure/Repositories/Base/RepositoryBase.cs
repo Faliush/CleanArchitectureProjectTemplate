@@ -1,11 +1,11 @@
-﻿using Domain.Core.Primitives.Pagination;
-using Infrastructure.Repositories.Contracts.Base;
+﻿using System.Linq.Expressions;
+using Domain.Core.Primitives.Pagination;
+using Domain.Repositories.Base;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Query;
-using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
-namespace Infrastructure.Repositories.Implementations.Base;
+namespace Infrastructure.Repositories.Base;
 
 internal abstract class RepositoryBase<TEntity> : IRepositoryBase<TEntity> where TEntity : class
 {

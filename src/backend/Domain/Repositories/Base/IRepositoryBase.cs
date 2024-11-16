@@ -1,10 +1,9 @@
-﻿using Domain.Core.Primitives.Pagination;
-using Domain.Core.Primitives.Result;
+﻿using System.Linq.Expressions;
+using Domain.Core.Primitives.Pagination;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Query;
-using System.Linq.Expressions;
 
-namespace Infrastructure.Repositories.Contracts.Base;
+namespace Domain.Repositories.Base;
 
 public interface IRepositoryBase<TEntity>
     where TEntity : class
