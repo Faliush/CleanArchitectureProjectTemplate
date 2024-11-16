@@ -30,6 +30,12 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(user => user.ModifiedOnUtc);
 
+        builder.Property(user => user.Deleted);
+
+        builder.Property(user => user.DeletedOnUtc);
+
         builder.Ignore(user => user.FullName);
+
+        builder.HasMany(x => x.Roles).WithMany(x => x.Users);
     }
 }

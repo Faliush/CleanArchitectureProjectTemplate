@@ -1,8 +1,9 @@
-﻿using Infrastructure.Database;
+﻿using Domain.Repositories;
+using Domain.UnitOfWork;
+using Infrastructure.Database;
 using Infrastructure.Interceptors;
 using Infrastructure.Outbox;
-using Infrastructure.Repositories.Contracts;
-using Infrastructure.Repositories.Implementations;
+using Infrastructure.Repositories;
 using Infrastructure.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -38,6 +39,10 @@ public static class DependencyInjection
 
         services.AddScoped<IUnitOfWork<ApplicationDbContext>,  UnitOfWork<ApplicationDbContext>>();
         services.AddScoped<IUnitOfWork, UnitOfWork<ApplicationDbContext>>();
+
+        services.AddScoped<IPermissionRepository, PermissionRepository>();
+        services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
 
         return services;
     }

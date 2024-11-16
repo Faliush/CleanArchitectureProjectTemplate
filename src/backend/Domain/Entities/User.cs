@@ -1,11 +1,13 @@
 ﻿using Domain.Core.Abstractions;
 using Domain.Core.Errors;
+using Domain.Core.Primitives;
 using Domain.Core.Primitives.Result;
+using Domain.ValueObjects;
 using Microsoft.AspNetCore.Identity;
 
 namespace Domain.Entities;
 
-public sealed class User : IdentityUser<Guid>, IAuditable
+public sealed class User : Entity, IAuditable, ISoftDeletable
 {
     public void SetRefreshToken(string refreshToken)
     {
@@ -30,12 +32,21 @@ public sealed class User : IdentityUser<Guid>, IAuditable
     public string LastName { get; set; } = string.Empty;
 
     public string FullName => $"{FirstName} {LastName}";
-
-    public DateTime CreatedOnUtc { get; }
-
-    public DateTime? ModifiedOnUtc { get; }
+    
+    public string Email { get; set; }
+    
+    public string PasswordHash { get; set; }
 
     public string? RefreshToken { get; set; }
 
     public DateTime RefreshTokenExpiryTime { get; set; }
+    
+    public DateTime CreatedOnUtc { get; }
+
+    public DateTime? ModifiedOnUtc { get; }
+    
+    public DateTime? DeletedOnUtc { get; }
+    public bool Deleted { get; }
+
+    public IList<Role> Roles { get; set; } = [];
 }

@@ -17,17 +17,17 @@ internal class TestAuthenticationHandler(
 {
     private static readonly string CustomClaim = "permission";
 
-    private static readonly List<Claim> _claims =
+    private static readonly List<Claim> Claims =
         [
             new(JwtRegisteredClaimNames.Sub, Guid.NewGuid().ToString()),
             new(JwtRegisteredClaimNames.Email, "developer@gmail.com"),
-            new(CustomClaim, nameof(Permissions.ManageUsers)),
-            new(CustomClaim, nameof(Permissions.User))
+            new(CustomClaim, nameof(Permissions.Default)),
+            new(CustomClaim, nameof(Permissions.FullAccess))
         ];
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        var identity = new ClaimsIdentity(_claims, "Test");
+        var identity = new ClaimsIdentity(Claims, "Test");
         var principal = new ClaimsPrincipal(identity);
         var ticket = new AuthenticationTicket(principal, "Test");
 

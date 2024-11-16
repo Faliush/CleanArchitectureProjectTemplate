@@ -1,44 +1,57 @@
 ﻿using Application.Abstractions.Authentication.Jwt;
+using Application.Abstractions.Cryptography;
 using Application.Abstractions.EmailSender;
 using Application.Abstractions.Messaging;
 using Domain.Core.Errors;
 using Domain.Core.Primitives.Result;
 using Domain.Entities;
-using Microsoft.AspNetCore.Identity;
+using Domain.Repositories;
+using Domain.UnitOfWork;
 
 namespace Application.Authentication.Commands.Register;
 
 internal sealed class RegisterCommandHandler(
-    UserManager<User> userManager,
+    IUserRepository userRepository,
+    IRoleRepository roleRepository,
+    IUnitOfWork unitOfWork,
+    IPasswordHasher passwordHasher,
     IJwtProvider jwtProvider,
     IEmailSender emailSender)
         : ICommandHandler<RegisterCommand, AuthenticatedResponse>
 {
     public async Task<Result<AuthenticatedResponse>> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
-        var isEmailUnique = await userManager.FindByEmailAsync(request.Email) is null;
+        var isEmailUnique = await userRepository.IsEmailUniqueAsync(request.Email, cancellationToken);
 
         if (!isEmailUnique)
         {
             return Result.Failure<AuthenticatedResponse>(DomainErrors.User.InvalidCredentials);
         }
 
-        var user = new User { FirstName = request.FirstName, LastName = request.LastName, Email = request.Email };
-
-        var userCreatedResult = await userManager.CreateAsync(user, request.Password);
-
-        if (!userCreatedResult.Succeeded)
+        var hashedPassword = passwordHasher.HashPassword(request.Password);
+        
+        var roles = await roleRepository.GetAllAsync(
+            predicate: x => x.IsDefault == true,
+            disableQuerySpliting: true, 
+            cancellationToken: cancellationToken);
+        
+        var user = new User
         {
-            return Result.Failure<AuthenticatedResponse>(DomainErrors.User.InvalidCredentials);
-        }
-        await userManager.AddToRoleAsync(user, "Registered");
+            FirstName = request.FirstName, 
+            LastName = request.LastName, 
+            Email = request.Email,
+            PasswordHash = hashedPassword,
+            Roles = roles
+        };
 
-        string accesToken = await jwtProvider.GenerateAccessTokenAsync(user);
-        string refreshToken = jwtProvider.GenerateRefreshToken();
+        var accesToken = await jwtProvider.GenerateAccessTokenAsync(user);
+        var refreshToken = jwtProvider.GenerateRefreshToken();
 
         user.SetRefreshToken(refreshToken);
 
-        await userManager.UpdateAsync(user);
+        await userRepository.InsertAsync(user, cancellationToken);
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         await emailSender.SendAsync(
             user.Email,

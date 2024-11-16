@@ -4,5 +4,5 @@ namespace Application.Abstractions.Cryptography;
 
 public interface IPasswordHasher
 {
-    string HashPassword(Password password);
+    string HashPassword(string password);
 }

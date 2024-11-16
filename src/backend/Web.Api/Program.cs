@@ -9,6 +9,8 @@ using Infrastructure.Database;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Persistence;
+using Persistence.Authentication;
 using Serilog;
 using Web.Api.Middlewares;
 using Web.Api.OptionSetups;
@@ -20,6 +22,7 @@ builder.Host.UseSerilog((context, loggerConfig) =>
 
 builder.Services
     .AddApplication()
+    .AddPersistence()
     .AddInfrastructure(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
@@ -52,14 +55,6 @@ builder.Services.AddApiVersioning(options =>
     options.SubstituteApiVersionInUrl = true;
 });
 
-builder.Services.AddIdentity<User, Role>(config =>
-{
-    config.Password.RequireNonAlphanumeric = false;
-    config.Password.RequiredLength = 5;
-    config.Password.RequiredUniqueChars = 3;
-    config.Password.RequireUppercase = false;
-}).AddEntityFrameworkStores<ApplicationDbContext>();
-
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer();
 
@@ -69,7 +64,6 @@ builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionAuthorizat
 
 builder.Services.ConfigureOptions<ConfigureSwaggerGenOptions>();
 builder.Services.ConfigureOptions<ConfigureJwtOptions>();
-builder.Services.ConfigureOptions<ConfigureGoogleOptions>();
 builder.Services.ConfigureOptions<ConfigureJwtBearerOptions>();
 
 builder.Services.AddStackExchangeRedisCache(options =>
@@ -110,10 +104,10 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseHttpsRedirection();
-
 app.UseMiddleware<RequestLogContextMiddleware>();
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+
+app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
