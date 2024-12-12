@@ -27,7 +27,7 @@ public class AuthenticationEndpoints : ICarterModule
         group.MapPost("refresh", Refresh)
             .Produces(StatusCodes.Status200OK, typeof(AuthenticatedResponse))
             .Produces(StatusCodes.Status400BadRequest)
-            .AllowAnonymous();;
+            .AllowAnonymous();
     }
     
     private static async Task<IResult> Login(
