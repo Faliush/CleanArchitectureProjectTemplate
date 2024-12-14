@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: backend/Web.Api/Dockerfile
     ports:
-      - 5000:80
+      - "5000:80"
     depends_on:
       - postgres
     environment:
@@ -42,7 +42,7 @@ services:
       ACCEPT_EULA: "Y"
       SA_PASSWORD: "Password12345"
     ports:
-      - 1433:1433
+      - "1433:1433"
     volumes:
        - "./volumes/db/sqlserver:/var/opt/mssql/data"
 
