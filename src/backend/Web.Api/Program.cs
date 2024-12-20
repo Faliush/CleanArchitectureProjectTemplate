@@ -1,11 +1,7 @@
 using Application;
-using Application.Abstractions.Authentication;
 using Asp.Versioning;
-using Asp.Versioning.ApiExplorer;
 using Carter;
-using Domain.Entities;
 using Infrastructure;
-using Infrastructure.Database;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -47,7 +43,11 @@ builder.Services.AddMassTransit(busConfiguration =>
 builder.Services.AddApiVersioning(options =>
 {
     options.DefaultApiVersion = new ApiVersion(1);
-    options.ApiVersionReader = new UrlSegmentApiVersionReader();
+    options.ReportApiVersions = true;
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ApiVersionReader = ApiVersionReader.Combine(
+        new UrlSegmentApiVersionReader(), 
+        new HeaderApiVersionReader("X-Api-Version"));
 })
 .AddApiExplorer(options =>
 {
@@ -82,7 +82,7 @@ var apiVersionSet = app.NewApiVersionSet()
     .Build();
 
 var versionedGroup = app
-    .MapGroup("api/v{apiVersion:apiVersion}")
+    .MapGroup("api/v{version:apiVersion}")
     .WithApiVersionSet(apiVersionSet);
 
 versionedGroup.MapCarter();
@@ -94,10 +94,10 @@ if (app.Environment.IsDevelopment())
     {
         var descriptions = app.DescribeApiVersions();
 
-        foreach(ApiVersionDescription description in descriptions)
+        foreach(var description in descriptions)
         {
-            string url = $"{description.GroupName}/swagger.json";
-            string name = description.GroupName.ToUpperInvariant();
+            var url = $"{description.GroupName}/swagger.json";
+            var name = description.GroupName.ToUpperInvariant();
 
             options.SwaggerEndpoint(url, name);
         }
